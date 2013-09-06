@@ -82,19 +82,18 @@ function CLIconsole() {
 
     // Used for backspace
     this.removeText = function(text) {
-      console.log(text);
       if (text !== "")
        {
-          // Determine beginning coordinates for the area we wish to clear
-          rect_x = this.CurrentXPosition - _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
-          rect_y = this.CurrentYPosition - (_DefaultFontSize);
-          
-          // Clear the Area
-          _DrawingContext.clearRect(rect_x, rect_y, this.CurrentXPosition, this.CurrentYPosition);
-          
-          // Move the current X position.
-           var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
-           this.CurrentXPosition -= offset;
+        // Determine beginning coordinates for the area we wish to clear
+        rect_x = this.CurrentXPosition - _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
+        rect_y = this.CurrentYPosition - (_DefaultFontSize);
+        
+        // Clear the Area
+        _DrawingContext.clearRect(rect_x, rect_y, this.CurrentXPosition, this.CurrentYPosition);
+        
+        // Move the current X position.
+         var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
+         this.CurrentXPosition -= offset;
       }
     };
 
