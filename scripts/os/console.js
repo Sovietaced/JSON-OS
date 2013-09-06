@@ -44,6 +44,14 @@ function CLIconsole() {
                // ... and reset our buffer.
                this.buffer = "";
            }
+           // Handle backspaces
+           else if (chr == String.fromCharCode(8))
+           {
+            buffer = this.buffer
+            chr = buffer.slice(-1);
+            this.buffer = buffer.slice(0, -1);
+            this.removeText(chr);
+           }
            // TODO: Write a case for Ctrl-C.
            else
            {
@@ -70,6 +78,24 @@ function CLIconsole() {
            var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
            this.CurrentXPosition = this.CurrentXPosition + offset;
        }
+    };
+
+    // Used for backspace
+    this.removeText = function(text) {
+      console.log(text);
+      if (text !== "")
+       {
+          // Determine beginning coordinates for the area we wish to clear
+          rect_x = this.CurrentXPosition - _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
+          rect_y = this.CurrentYPosition - (_DefaultFontSize);
+          
+          // Clear the Area
+          _DrawingContext.clearRect(rect_x, rect_y, this.CurrentXPosition, this.CurrentYPosition);
+          
+          // Move the current X position.
+           var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
+           this.CurrentXPosition -= offset;
+      }
     };
 
     this.advanceLine = function() {
