@@ -31,6 +31,13 @@ function shellInit() {
     sc.function = shellVer;
     this.commandList[this.commandList.length] = sc;
     
+    // date
+    sc = new ShellCommand();
+    sc.command = "date";
+    sc.description = "- Displays the current date.";
+    sc.function = shellDate;
+    this.commandList[this.commandList.length] = sc;
+
     // help
     sc = new ShellCommand();
     sc.command = "help";
@@ -261,6 +268,14 @@ function shellVer(args)
     _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
 }
 
+function shellDate(args)
+{
+    var d = new Date();
+    var curr_date = d.getDate();
+    var curr_month = d.getMonth() + 1; //Months are zero based
+    var curr_year = d.getFullYear();
+    _StdIn.putText(curr_month + "-" + curr_date + "-" + curr_year);
+}
 function shellHelp(args)
 {
     _StdIn.putText("Commands:");
