@@ -38,6 +38,13 @@ function shellInit() {
     sc.function = shellDate;
     this.commandList[this.commandList.length] = sc;
 
+    // whereami
+    sc = new ShellCommand();
+    sc.command = "whereami";
+    sc.description = "- Displays where you are";
+    sc.function = shellWhereami;
+    this.commandList[this.commandList.length] = sc;
+
     // help
     sc = new ShellCommand();
     sc.command = "help";
@@ -276,6 +283,16 @@ function shellDate(args)
     var curr_year = d.getFullYear();
     _StdIn.putText(curr_month + "-" + curr_date + "-" + curr_year);
 }
+
+function shellWhereami(args)
+{
+    if (navigator.geolocation){
+        console.log("yay");
+    }
+    console.log(position.coords.latitude);
+    
+}
+
 function shellHelp(args)
 {
     _StdIn.putText("Commands:");
