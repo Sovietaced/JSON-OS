@@ -50,7 +50,9 @@ function krnKbdDispatchKeyPress(params)
     else if ( ((keyCode >= 48) && (keyCode <= 57)) ||   // digits 
                (keyCode == 32)                     ||   // space
                (keyCode == 13)                     ||   // enter
-               (keyCode == 8))                          // backspace
+               (keyCode == 8)                      ||   // backspace
+               (keyCode == 222)                    ||   // single quote
+               ((keyCode >= 186) && (keyCode <= 192)))   // punctuation
     {
         chr = String.fromCharCode(keyCode);
         _KernelInputQueue.enqueue(chr); 

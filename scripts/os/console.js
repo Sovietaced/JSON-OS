@@ -56,6 +56,7 @@ function CLIconsole() {
            else
            {
                // This is a "normal" character, so ...
+               console.log(chr);
                // ... draw it on the screen...
                this.putText(chr);
                // ... and add it to our buffer.
