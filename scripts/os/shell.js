@@ -286,11 +286,17 @@ function shellDate(args)
 
 function shellWhereami(args)
 {
-    if (navigator.geolocation){
-        console.log("yay");
+    // Check to see that browser supports geolocation
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            _StdIn.putText("You're at (" + position.coords.latitude + "," +
+                position.coords.longitude + ")");
+        }, function(error) {
+            _StdIn.putText("Failed to determine your geolocation ");
+        });
+    } else {
+        _StdIn.putText("Turn on location sharing and I might tell you.");
     }
-    console.log(position.coords.latitude);
-    
 }
 
 function shellHelp(args)
