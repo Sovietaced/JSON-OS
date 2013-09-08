@@ -45,6 +45,13 @@ function shellInit() {
     sc.function = shellWhereami;
     this.commandList[this.commandList.length] = sc;
 
+    // barrel roll
+    sc = new ShellCommand();
+    sc.command = "roll";
+    sc.description = "- Does a barrel roll";
+    sc.function = shellRoll;
+    this.commandList[this.commandList.length] = sc;
+
     // help
     sc = new ShellCommand();
     sc.command = "help";
@@ -292,11 +299,19 @@ function shellWhereami(args)
             _StdIn.putText("You're at (" + position.coords.latitude + "," +
                 position.coords.longitude + ")");
         }, function(error) {
-            _StdIn.putText("Failed to determine your geolocation ");
+            _StdIn.putText("Failed to determine your geolocation");
         });
     } else {
         _StdIn.putText("Turn on location sharing and I might tell you.");
     }
+}
+
+function shellRoll(args)
+{   
+    jQuery('body').addClass('barrel_roll');
+    setTimeout(function(){
+    jQuery('body').removeClass('barrel_roll');
+    },4000);
 }
 
 function shellHelp(args)
