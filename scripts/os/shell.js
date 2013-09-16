@@ -32,13 +32,6 @@ function shellInit() {
     sc.description = "- Displays the current version data.";
     sc.function = shellVer;
     this.commandList[this.commandList.length] = sc;
-
-    // ver
-    sc = new ShellCommand();
-    sc.command = "shift";
-    sc.description = "- Displays the current version data.";
-    sc.function = shellShift;
-    this.commandList[this.commandList.length] = sc;
     
     // date
     sc = new ShellCommand();
@@ -289,11 +282,6 @@ function shellApology()
 function shellVer(args)
 {
     _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
-}
-
-function shellShift(args)
-{
-    _StdIn.shiftt();   
 }
 
 function shellDate(args)
