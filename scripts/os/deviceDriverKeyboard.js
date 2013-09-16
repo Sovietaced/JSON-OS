@@ -7,6 +7,44 @@
    ---------------------------------- */
 
 DeviceDriverKeyboard.prototype = new DeviceDriver;  // "Inherit" from prototype DeviceDriver in deviceDriver.js.
+ //These are special cases that don't fit the ASCII mapping
+var exceptions = {
+    186: 59, // ;
+    187: 61, // =
+    188: 44, // ,
+    189: 45, // -
+    190: 46, // .
+    191: 47, // /
+    192: 96, // `
+    219: 91, // [
+    220: 92, // \
+    221: 93, // ]
+    222: 39  // '
+}
+
+var special = {
+    1: '!',
+    2: '@',
+    3: '#',
+    4: '$',
+    5: '%',
+    6: '^',
+    7: '&',
+    8: '*',
+    9: '(',
+    0: ')',
+    ',': '<',
+    '.': '>',
+    '/': '?',
+    ';': ':',
+    "'": '"',
+    '[': '{',
+    ']': '}',
+    '\\': '|',
+    '`': '~',
+    '-': '_',
+    '=': '+'
+};
 
 function DeviceDriverKeyboard()                     // Add or override specific attributes and method pointers.
 {
@@ -32,6 +70,7 @@ function krnKbdDispatchKeyPress(params)
     var isShifted = params[1];
     krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
     var chr = "";
+
     // Check to see if we even want to deal with the key that was pressed.
     if ( ((keyCode >= 65) && (keyCode <= 90)) ||   // A..Z
          ((keyCode >= 97) && (keyCode <= 123)) )   // a..z
@@ -51,15 +90,18 @@ function krnKbdDispatchKeyPress(params)
                (keyCode == 32)                     ||   // space
                (keyCode == 13)                     ||   // enter
                (keyCode == 8)                      ||   // backspace
-               (keyCode == 38)                     ||
-               (keyCode == 40))                        // up arrow
+               (keyCode == 38)                     ||   // up arrow
+               (keyCode == 40))                        // down arrow
               {
         chr = String.fromCharCode(keyCode);
         _KernelInputQueue.enqueue(chr); 
     }
-    else if ( ((keyCode >= 186) && (keyCode <= 192)) ||
-              (keyCode == 222))
+    else if (keyCode in exceptions)
     {
-      console.log("stuff");
+        chr = String.fromCharCode(exceptions[keyCode]);
+        if(isShifted){
+          chr = special[chr];
+        }
+        _KernelInputQueue.enqueue(chr); 
     }
 }

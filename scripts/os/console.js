@@ -103,8 +103,11 @@ function CLIconsole() {
         
         // Clear the entire line
         _DrawingContext.clearRect(this.CurrentXPosition, rect_y, _Canvas.width, this.CurrentYPosition);
+        
+        // Print the prompt
         _OsShell.putPrompt();
 
+        // Print any text passed
         if(text)
         {
           this.putText(text);
