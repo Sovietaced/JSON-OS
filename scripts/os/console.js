@@ -36,13 +36,44 @@ function CLIconsole() {
            // Get the next character from the kernel input queue.
            var chr = _KernelInputQueue.dequeue();
            // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
-           if (chr == String.fromCharCode(13))  //     Enter key
+           // Handle Enter Key
+
+           if (chr == String.fromCharCode(13))
            {
                // The enter key marks the end of a console command, so ...
                // ... tell the shell ...
+               _OsShell.cmdHistory.push(this.buffer);
+               _OsShell.cmdHistoryLength = _OsShell.cmdHistory.length;
                _OsShell.handleInput(this.buffer);
                // ... and reset our buffer.
                this.buffer = "";
+           }
+           // Handle up - Command History
+           else if (chr == String.fromCharCode(38))
+           {
+                if (_OsShell.cmdHistoryLength > 0)
+                {
+                  _OsShell.cmdHistoryLength--;
+                  this.buffer = _OsShell.cmdHistory[_OsShell.cmdHistoryLength];
+                  this.clearLine(this.buffer);
+                }
+                console.log(_OsShell.cmdHistoryLength);
+           }
+            // Handle down - Command History
+           else if (chr == String.fromCharCode(40))
+           {
+                if (_OsShell.cmdHistoryLength < _OsShell.cmdHistory.length)
+                {
+                  _OsShell.cmdHistoryLength++;
+                  this.buffer = _OsShell.cmdHistory[_OsShell.cmdHistoryLength];
+                  this.clearLine(this.buffer);
+                }
+                else
+                {
+                  this.buffer = "";
+                  this.clearLine();
+                }
+                console.log(_OsShell.cmdHistoryLength);
            }
            // Handle backspaces
            else if (chr == String.fromCharCode(8))
@@ -65,12 +96,22 @@ function CLIconsole() {
        }
     };
 
+    this.clearLine = function(text) {
+        // Determine beginning coordinates for the area we wish to clear
+        rect_y = this.CurrentYPosition - (_DefaultFontSize);
+        this.CurrentXPosition = 0;
+        
+        // Clear the entire line
+        _DrawingContext.clearRect(this.CurrentXPosition, rect_y, _Canvas.width, this.CurrentYPosition);
+        _OsShell.putPrompt();
+
+        if(text)
+        {
+          this.putText(text);
+        }
+    };
+
     this.putText = function(text) {
-       // My first inclination here was to write two functions: putChar() and putString().
-       // Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
-       // between the two.  So rather than be like PHP and write two (or more) functions that
-       // do the same thing, thereby encouraging confusion and decreasing readability, I
-       // decided to write one function and use the term "text" to connote string or char.
        if (text !== "")
        {
            // Draw the text at the current X and Y coordinates.

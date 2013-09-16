@@ -12,6 +12,8 @@ function Shell() {
     this.commandList = [];
     this.curses      = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
     this.apologies   = "[sorry]";
+    this.cmdHistory = [];
+    this.cmdHistoryLength = -1; 
     // Methods
     this.init        = shellInit;
     this.putPrompt   = shellPutPrompt;

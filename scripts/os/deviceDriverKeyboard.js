@@ -51,10 +51,15 @@ function krnKbdDispatchKeyPress(params)
                (keyCode == 32)                     ||   // space
                (keyCode == 13)                     ||   // enter
                (keyCode == 8)                      ||   // backspace
-               (keyCode == 222)                    ||   // single quote
-               ((keyCode >= 186) && (keyCode <= 192)))   // punctuation
-    {
+               (keyCode == 38)                     ||
+               (keyCode == 40))                        // up arrow
+              {
         chr = String.fromCharCode(keyCode);
         _KernelInputQueue.enqueue(chr); 
+    }
+    else if ( ((keyCode >= 186) && (keyCode <= 192)) ||
+              (keyCode == 222))
+    {
+      console.log("stuff");
     }
 }
