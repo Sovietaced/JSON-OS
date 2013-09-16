@@ -57,7 +57,6 @@ function CLIconsole() {
                   this.buffer = _OsShell.cmdHistory[_OsShell.cmdHistoryLength];
                   this.clearLine(this.buffer);
                 }
-                console.log(_OsShell.cmdHistoryLength);
            }
             // Handle down - Command History
            else if (chr == String.fromCharCode(40))
@@ -73,7 +72,6 @@ function CLIconsole() {
                   this.buffer = "";
                   this.clearLine();
                 }
-                console.log(_OsShell.cmdHistoryLength);
            }
            // Handle backspaces
            else if (chr == String.fromCharCode(8))
@@ -145,6 +143,14 @@ function CLIconsole() {
     this.advanceLine = function() {
        this.CurrentXPosition = 0;
        this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
-       // TODO: Handle scrolling.
+
+       // Implement scrolling if we are running out of space
+       if (this.CurrentYPosition > _Canvas.height)
+       {
+        var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+        this.clearScreen();
+        _DrawingContext.putImageData(img, 0, (_DefaultFontSize + _FontHeightMargin) * -1);
+        this.CurrentYPosition -= _DefaultFontSize + _FontHeightMargin;
+      }
     };
 }
