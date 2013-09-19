@@ -173,6 +173,8 @@ function krnTrace(msg)
          if (_OSclock % 10 == 0)  // Check the CPU_CLOCK_INTERVAL in globals.js for an 
          {                        // idea of the tick rate and adjust this line accordingly.
             hostLog(msg, "OS");
+            // Update the clock on the UI
+            _StdIn.updateStatus();
          }         
       }
       else
@@ -186,5 +188,6 @@ function krnTrapError(msg)
 {
     hostLog("OS ERROR - TRAP: " + msg);
     // TODO: Display error on console, perhaps in some sort of colored screen. (Perhaps blue?)
+    _StdIn.bsod(msg);
     krnShutdown();
 }

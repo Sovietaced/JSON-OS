@@ -40,6 +40,13 @@ function shellInit() {
     sc.function = shellDate;
     this.commandList[this.commandList.length] = sc;
 
+    // date
+    sc = new ShellCommand();
+    sc.command = "status";
+    sc.description = "- Updates the status";
+    sc.function = shellStatus;
+    this.commandList[this.commandList.length] = sc;
+
     // whereami
     sc = new ShellCommand();
     sc.command = "whereami";
@@ -285,12 +292,26 @@ function shellVer(args)
 }
 
 function shellDate(args)
-{
+{   
+    _StdIn.bsod();
     var d = new Date();
     var curr_date = d.getDate();
     var curr_month = d.getMonth() + 1; //Months are zero based
     var curr_year = d.getFullYear();
     _StdIn.putText(curr_month + "-" + curr_date + "-" + curr_year);
+}
+
+function shellStatus(args)
+{
+   if (args.length > 0)
+    {
+        var status = args[0];
+        _StdIn.updateStatus(status);   
+    }
+    else
+    {
+        _StdIn.putText("Usage: status <status>  Please supply a status");
+    }
 }
 
 function shellWhereami(args)

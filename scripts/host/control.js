@@ -64,6 +64,7 @@ function hostLog(msg, source)
     var taLog = document.getElementById("taLog");
     taLog.value = str + taLog.value;
     // Optionally update a log database or some streaming service.
+
 }
 
 

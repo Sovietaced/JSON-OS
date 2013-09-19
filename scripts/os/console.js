@@ -14,15 +14,18 @@ function CLIconsole() {
     this.CurrentXPosition = 0;
     this.CurrentYPosition = _DefaultFontSize;
     this.buffer = "";
-    
+    this.status_height = 20;
+    this.console_height = 0;
+    this.status_ = "type status <status>";
     // Methods
     this.init = function() {
        this.clearScreen();
        this.resetXY();
+       this.console_height = _Canvas.height - this.status_height;
     };
 
     this.clearScreen = function() {
-       _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
+       _DrawingContext.clearRect(0, 0, _Canvas.width, this.console_height);
     };
 
     this.resetXY = function() {
@@ -79,7 +82,7 @@ function CLIconsole() {
             buffer = this.buffer
             chr = buffer.slice(-1);
             this.buffer = buffer.slice(0, -1);
-            this.removeText(chr);
+            this.clearLine(this.buffer);
            }
            // TODO: Write a case for Ctrl-C.
            else
@@ -94,16 +97,42 @@ function CLIconsole() {
        }
     };
 
+
+    this.updateStatus = function(status) {
+
+      // Update time
+      currentdate = new Date();
+      var datetime = currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+
+      if (status){
+        this.status_ = status
+      }
+        // Clear the entire area
+        _DrawingContext.clearRect(0, this.console_height, _Canvas.width, _Canvas.height);
+       // Draw a rectangle with a border
+       _DrawingContext.strokeRect(0,this.console_height,_Canvas.width, _Canvas.height);
+        // Draw the text at the current X and Y coordinates.
+        _DrawingContext.drawText(this.CurrentFont, this.CurrentFontSize, 5, this.console_height + 15, datetime + " Status : " + this.status_);
+    };
+
     this.clearLine = function(text) {
         // Determine beginning coordinates for the area we wish to clear
-        rect_y = this.CurrentYPosition - (_DefaultFontSize);
+        rect_y = this.CurrentYPosition - (_DefaultFontSize) - 2 ;
         this.CurrentXPosition = 0;
         
         // Clear the entire line
-        _DrawingContext.clearRect(this.CurrentXPosition, rect_y, _Canvas.width, this.CurrentYPosition);
+        _DrawingContext.clearRect(this.CurrentXPosition, rect_y, _Canvas.width, this.CurrentYPosition + 4);
         
         // Print the prompt
         _OsShell.putPrompt();
+
+        // Update the status
+        this.updateStatus();
 
         // Print any text passed
         if(text)
@@ -123,34 +152,32 @@ function CLIconsole() {
        }
     };
 
-    // Used for backspace
-    this.removeText = function(text) {
-      if (text !== "")
-       {
-        // Determine beginning coordinates for the area we wish to clear
-        rect_x = this.CurrentXPosition - _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
-        rect_y = this.CurrentYPosition - (_DefaultFontSize);
-        
-        // Clear the Area
-        _DrawingContext.clearRect(rect_x, rect_y, this.CurrentXPosition, this.CurrentYPosition);
-        
-        // Move the current X position.
-         var offset = _DrawingContext.measureText(this.CurrentFont, this.CurrentFontSize, text);
-         this.CurrentXPosition -= offset;
-      }
-    };
-
     this.advanceLine = function() {
        this.CurrentXPosition = 0;
        this.CurrentYPosition += _DefaultFontSize + _FontHeightMargin;
 
        // Implement scrolling if we are running out of space
-       if (this.CurrentYPosition > _Canvas.height)
+       if (this.CurrentYPosition > this.console_height)
        {
-        var img = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);
+        // Take a snapshot of the canvas with the newest output
+        var img = _DrawingContext.getImageData(0, 0, _Canvas.width, this.console_height);
+        // Clear the canvas
         this.clearScreen();
+        // Paint the snapshot shifted upwards by the line height
         _DrawingContext.putImageData(img, 0, (_DefaultFontSize + _FontHeightMargin) * -1);
+        // Adjust position accordingly
         this.CurrentYPosition -= _DefaultFontSize + _FontHeightMargin;
       }
+    };
+
+    // Blue screen of death yall!
+    this.bsod = function(msg) {
+      _DrawingContext.fillStyle="blue";
+      _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
+
+       // Draw the text in the middle in some big fat font
+       _DrawingContext.font = '40pt Calibri';
+       _DrawingContext.fillStyle="white";
+      _DrawingContext.fillText(msg, (100), (_Canvas.height/2));
     };
 }
