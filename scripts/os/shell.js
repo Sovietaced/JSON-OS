@@ -348,7 +348,7 @@ function shellWhereami(args)
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             _StdIn.putText("You're at (" + position.coords.latitude + "," +
-                position.coords.longitude + ")");
+                position.coords.longitude + ").");
         }, function(error) {
             _StdIn.putText("Failed to determine your geolocation");
         });

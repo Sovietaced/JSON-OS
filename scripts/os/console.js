@@ -45,12 +45,16 @@ function CLIconsole() {
            {
                // The enter key marks the end of a console command, so ...
                // ... tell the shell ...
-               _OsShell.cmdHistory.push(this.buffer);
-               _OsShell.cmdHistoryLength = _OsShell.cmdHistory.length;
-               _OsShell.handleInput(this.buffer);
-               // ... and reset our buffer.
-               this.buffer = "";
-           }
+                 _OsShell.cmdHistoryLength = _OsShell.cmdHistory.length;
+                 _OsShell.handleInput(this.buffer);
+
+                 // We only want to store history if its GOOD history
+                if(this.buffer !== ""){
+                 _OsShell.cmdHistory.push(this.buffer);
+                 // ... and reset our buffer.
+                 this.buffer = "";
+                 }           
+              }
            // Handle up - Command History
            else if (chr == String.fromCharCode(38))
            {
@@ -112,7 +116,7 @@ function CLIconsole() {
       if (status){
         this.status_ = status
       }
-        // Clear the entire area
+        // Clear the status area
         _DrawingContext.clearRect(0, this.console_height, _Canvas.width, _Canvas.height);
        // Draw a rectangle with a border
        _DrawingContext.strokeRect(0,this.console_height,_Canvas.width, _Canvas.height);
