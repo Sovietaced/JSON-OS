@@ -40,6 +40,13 @@ function shellInit() {
     sc.function = shellDate;
     this.commandList[this.commandList.length] = sc;
 
+     // date
+    sc = new ShellCommand();
+    sc.command = "testbsod";
+    sc.description = "- Tests the blue screen of death feature";
+    sc.function = shellTestBSOD;
+    this.commandList[this.commandList.length] = sc;
+
     // date
     sc = new ShellCommand();
     sc.command = "status";
@@ -293,12 +300,16 @@ function shellVer(args)
 
 function shellDate(args)
 {   
-    _StdIn.bsod();
     var d = new Date();
     var curr_date = d.getDate();
     var curr_month = d.getMonth() + 1; //Months are zero based
     var curr_year = d.getFullYear();
     _StdIn.putText(curr_month + "-" + curr_date + "-" + curr_year);
+}
+
+function shellTestBSOD(args)
+{   
+    _StdIn.bsod();
 }
 
 function shellStatus(args)
