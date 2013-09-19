@@ -40,11 +40,18 @@ function shellInit() {
     sc.function = shellDate;
     this.commandList[this.commandList.length] = sc;
 
-     // date
+     // testbsod
     sc = new ShellCommand();
     sc.command = "testbsod";
     sc.description = "- Tests the blue screen of death feature";
     sc.function = shellTestBSOD;
+    this.commandList[this.commandList.length] = sc;
+
+    // load
+    sc = new ShellCommand();
+    sc.command = "load";
+    sc.description = "- Verifies that the user code is valid";
+    sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
 
     // date
@@ -310,6 +317,16 @@ function shellDate(args)
 function shellTestBSOD(args)
 {   
     _StdIn.bsod();
+}
+
+function shellLoad(args)
+{   
+    var user_input = $('textarea#taProgramInput').val();
+    if (user_input.match(/^[0-9A-F]/i)) {
+            _StdIn.putText("User input valid!");
+        } else {
+            _StdIn.putText("User input invalid, try again.");
+        }
 }
 
 function shellStatus(args)
