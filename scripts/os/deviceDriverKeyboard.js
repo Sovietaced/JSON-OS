@@ -104,4 +104,9 @@ function krnKbdDispatchKeyPress(params)
         }
         _KernelInputQueue.enqueue(chr); 
     }
+    // Throw errors - currently thrown for shift and caps lock will fix soon
+    else 
+    {
+      //krnTrapError("Invalid key code");
+    }
 }
