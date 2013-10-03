@@ -321,9 +321,12 @@ function shellTestBSOD(args)
 
 function shellLoad(args)
 {   
+    // get value from html text area
     var user_input = $('textarea#taProgramInput').val();
     if (user_input.match(/^[0-9A-F]/i)) {
-            _StdIn.putText("User input valid!");
+            krnCreateProcess(user_input);
+            // Clear text area
+            $('textarea#taProgramInput').val("");
         } else {
             _StdIn.putText("User input invalid, try again.");
         }

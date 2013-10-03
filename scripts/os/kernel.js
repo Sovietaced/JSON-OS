@@ -158,7 +158,7 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 // - WriteFile
 // - CloseFile
 
-function createProcess()
+function krnCreateProcess()
 {
   // Create process control block
   return null;
