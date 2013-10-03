@@ -89,6 +89,11 @@ function hostBtnStartOS_click(btn)
 
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);
+
+    // ... Create and initialize the RAM ...
+    _RAM = new Ram();
+    _RAM.init();
+
     // .. and call the OS Kernel Bootstrap routine.
     krnBootstrap();
 }
