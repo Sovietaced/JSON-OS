@@ -13,12 +13,12 @@ function Ram() {
     this.init = function() {
         
         // Write 0s to RAM
-        for (var i = 0; i < this.memory.length; i++){
-          this.memory[i] = 0;
-        }
+        this.clearMemory;
     };
 
     this.clearMemory = function() {
-      return [] ;
+       for (var i = 0; i < this.memory.length; i++){
+          this.memory[i] = 0;
+        }
     };
 }
