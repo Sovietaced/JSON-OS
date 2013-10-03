@@ -7,8 +7,8 @@
 
 function Ram() {
 
-    var RAM_SIZE = 256;                     // 256 bytes
-    this.memory = new Array(RAM_SIZE);      // memory array
+    this.RAM_SIZE = 256;                     // 256 bytes
+    this.memory = new Array(this.RAM_SIZE);      // memory array
     
     this.init = function() {
         
