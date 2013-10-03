@@ -13,8 +13,8 @@ function Ram() {
     this.init = function() {
         
         // Write 0s to RAM
-        for (value in this.memory){
-          value = 0;
+        for (var i = 0; i < this.memory.length; i++){
+          this.memory[i] = 0;
         }
     };
 
