@@ -5,7 +5,7 @@
    
    ------------ */
 
-function ProcessControlBlock() {
+function PCB() {
 
 	var pointer = null;
     var processState = null;  
@@ -15,7 +15,7 @@ function ProcessControlBlock() {
     var memoryInfo = null;               
     
     
-    this.init = function() {
+    this.init = function(pid) {
         
     };
     

@@ -1,11 +1,11 @@
 /* ------------  
-   memoryManagementUnit.js
+   memoryManager.js
 
    Requires global.js.
    
    ------------ */
 
-function MemoryManagementUnit() {
+function MemoryManager() {
 
     
     
