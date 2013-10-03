@@ -158,8 +158,15 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 // - WriteFile
 // - CloseFile
 
-function krnCreateProcess()
+function krnCreateProcess(program)
 {
+  for(var i = 0; i < program.length; i++){
+    console.log(_RAM.writeMemory(_CPU.PC, program[i]));
+    _CPU.PC++;
+  }
+
+  // debugging
+  _RAM.dumpMemory();
   // Create process control block
   return null;
 };

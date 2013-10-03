@@ -13,7 +13,7 @@ function Ram() {
     this.init = function() {
         
         // Write 0s to RAM
-        this.clearMemory;
+        this.clearMemory();
     };
 
     // wrtires 0s to all bytes
@@ -36,5 +36,12 @@ function Ram() {
 
     this.readMemory = function(PC) {
       return this.memory[PC];
+    }
+
+    //Debugging
+    this.dumpMemory = function() {
+      for (var i = 0; i < this.memory.length; i++){
+          console.log(this.memory[i]);
+        }
     }
 }
