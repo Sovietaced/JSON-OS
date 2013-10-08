@@ -19,5 +19,9 @@ function PCB() {
     this.init = function(pid){
         
     };
+
+    this.run = function(){
+
+    };
     
 }

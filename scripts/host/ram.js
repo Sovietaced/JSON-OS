@@ -30,6 +30,7 @@ function Ram() {
         return true;
       }
       else{
+        console.log("Memory space taken at PC " + PC);
         return false;
       }
     };

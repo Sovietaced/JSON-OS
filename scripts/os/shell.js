@@ -54,6 +54,13 @@ function shellInit() {
     sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
 
+         // testbsod
+    sc = new ShellCommand();
+    sc.command = "run";
+    sc.description = "- Runs a program in memory specified by it's PID";
+    sc.function = shellRun;
+    this.commandList[this.commandList.length] = sc;
+
     // date
     sc = new ShellCommand();
     sc.command = "status";
@@ -317,6 +324,24 @@ function shellDate(args)
 function shellTestBSOD(args)
 {   
     _StdIn.bsod();
+}
+
+function shellRun(args)
+{   
+    // get value from html text area
+    var pid = args[0];
+    if (parseInt(pid) >= 0) {
+        for (var i = 0; i < _Processes.length; i++ ){
+            if (_Processes[i].getPid() == parseInt(pid)){
+                _StdIn.putText("Found process with PID " + pid + ". Running...");
+                _Processes[i].run();
+                return;
+            }
+        }
+        _StdIn.putText("Failed to find process with PID " + pid + ".");
+    } else {
+        _StdIn.putText("The PID must be a valid integer");
+    }
 }
 
 function shellLoad(args)
