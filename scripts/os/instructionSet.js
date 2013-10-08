@@ -74,6 +74,15 @@ function branch(numBytes){
     }
 }
 
+function increment(PC){
+    // Get value and parse as integer
+    var value = parseInt(_RAM.readMemory(PC), 16);
+    // Increment value 
+    value++;
+    // Parse value as hex string and write back to memory
+    _RAM.writeMemory(PC, value.toString(16));
+}
+
 function system(){
     //derp
 }
