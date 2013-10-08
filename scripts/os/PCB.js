@@ -33,14 +33,25 @@ function PCB() {
     this.run = function(){
     	var instructionString = "";
     	var instruction = null;
+    	var arguments = null;
 
     	while(this.PC < (this.base + this.offset)){
     		instructionString = this.readInstruction();
     		console.log(instructionString);
     		console.log(_OpCodes);
     		if (instructionString in _OpCodes){
+    			// Get the instruction value in the opcodes dictionary
     			instruction = _OpCodes[instructionString];
-    			console.log(this.readArguments(instruction["args"]));
+    			// Determine the arguments based on the instruction's expected arguments
+    			arguments = this.readArguments(instruction.args);
+    			// Execute the instruction
+    			console.log(instruction);
+    			var funct = instruction.funct;
+    			console.log(funct);
+    			funct(arguments);
+
+    			//debugging
+    			console.log("Accumulator: " + _CPU.Acc);
     		}
     		else{
     			console.log("fail");

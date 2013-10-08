@@ -21,10 +21,10 @@ var _OpCodes = {
     'FF': { args: 0, funct: loadWithConstant }
 };
 
-var loadWithConstant = function(constant){
+function loadWithConstant(constant){
     _CPU.Acc = constant;
-};
+}
 
-var loadFromMemory = function(PC){
+function loadFromMemory(PC){
     _CPU.Acc = _RAM.readMemory(PC);
-};
+}
