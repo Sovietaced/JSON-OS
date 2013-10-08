@@ -160,17 +160,16 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 
 function krnCreateProcess(program)
 {
-    
+  
+  // Attempt to allocate memory for program
   if(_memoryManager.allocate(program)){
     console.log("yay");
-  // process = new PCB();
-  // process.init(_Processes.length) // Create process by passing in ID
-  // _Processes.push(process);
+    process = new PCB();
+    process.init(_Processes.length, program.length); // Create process by passing in ID
+    _Processes.push(process);
 
-  // // debugging
-  // _RAM.dumpMemory();
-  // // Create process control block
-  // return null;
+    // Create process control block
+    return process.getPid();
   }
   else{
     console.log("no");

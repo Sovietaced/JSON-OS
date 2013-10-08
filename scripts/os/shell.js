@@ -349,7 +349,10 @@ function shellLoad(args)
     // get value from html text area
     var user_input = $('textarea#taProgramInput').val();
     if (user_input.match(/^[0-9A-F]/i)) {
-            krnCreateProcess(user_input);
+            var result = krnCreateProcess(user_input);
+            if(!result){
+                _StdIn.putText("Program loaded with PID " + result );
+            }
             // Clear text area
             $('textarea#taProgramInput').val("");
         } else {
