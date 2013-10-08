@@ -84,5 +84,10 @@ function increment(PC){
 }
 
 function system(){
-    //derp
+    if (_CPU.Xreg == 1){
+        _StdIn.putText("Y register: " + parseInt(_CPU.Yreg, 16));
+    }
+    if (_CPU.Xreg == 2){
+        _StdIn.putText("Y register: " + _CPU.Yreg.toString(16));
+    }
 }
