@@ -24,7 +24,7 @@ function Ram() {
     };
 
     this.writeMemory = function(PC,value) {
-      // Check if memory already taken
+      // Check if memory already taken  
       if(this.memory[PC] === 0){
         this.memory[PC] = value;
         return true;

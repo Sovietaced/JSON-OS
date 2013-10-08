@@ -22,7 +22,6 @@ function krnBootstrap()      // Page 8.
    _KernelBuffers = new Array();         // Buffers... for the kernel.
    _KernelInputQueue = new Queue();      // Where device input lands before being processed out somewhere.
    _Console = new CLIconsole();          // The command line interface / console I/O device.
-
    // Initialize the CLIconsole.
    _Console.init();
 
@@ -37,7 +36,8 @@ function krnBootstrap()      // Page 8.
    krnTrace(krnKeyboardDriver.status);
 
    //
-   // ... more?
+   _Processes = new Array();            // List where processes are stored
+   _memoryManager = new MemoryManager();
    //
 
    // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
@@ -160,15 +160,21 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 
 function krnCreateProcess(program)
 {
-  for(var i = 0; i < program.length; i++){
-    console.log(_RAM.writeMemory(_CPU.PC, program[i]));
-    _CPU.PC++;
-  }
+    
+  if(_memoryManager.allocate(program)){
+    console.log("yay");
+  // process = new PCB();
+  // process.init(_Processes.length) // Create process by passing in ID
+  // _Processes.push(process);
 
-  // debugging
-  _RAM.dumpMemory();
-  // Create process control block
-  return null;
+  // // debugging
+  // _RAM.dumpMemory();
+  // // Create process control block
+  // return null;
+  }
+  else{
+    console.log("no");
+  }
 };
 
 

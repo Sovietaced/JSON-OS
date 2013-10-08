@@ -7,15 +7,16 @@
 
 function PCB() {
 
-	var pointer = null;
-    var processState = null;  
+	var Acc = null;
+	var Xreg = null;
+	var Yreg = null;
     var pid = null;
     var PC = 0;
-    var PS = null;
-    var memoryInfo = null;               
+	var base = null;
+	var limit = null;              
     
     
-    this.init = function(pid) {
+    this.init = function(pid){
         
     };
     
