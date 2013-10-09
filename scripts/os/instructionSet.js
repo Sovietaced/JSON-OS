@@ -4,14 +4,14 @@
  *
  * ----------------- */
 
-var _OpCodes = {
+var OP_CODES = {
     'A9': { args: 2, funct: loadAccWithConstant },
     'AD': { args: 4, funct: loadAccFromMemory },
     '8D': { args: 4, funct: storeAccInMemory },
     '6D': { args: 4, funct: addWithCarry },
     'A2': { args: 2, funct: loadXregWithConstant },
     'AE': { args: 4, funct: loadXregFromMemory },
-    'A0': { args: 2, funct: loadYregWithContant },
+    'A0': { args: 2, funct: loadYregWithConstant },
     'AC': { args: 4, funct: loadYregFromMemory },
     'EA': { args: 0, funct: noOp },
     '00': { args: 0, funct: brk },
@@ -22,23 +22,27 @@ var _OpCodes = {
 };
 
 function loadAccWithConstant(constant){
-    _CPU.Acc = constant;
+    _CPU.Acc = parseInt(constant, 16);
+    console.log("Accumulator: " + _CPU.Acc)
 }
 
 function loadAccFromMemory(PC){
     _CPU.Acc = _RAM.readMemory(PC);
+    console.log("Accumulator: " + _CPU.Acc)
 }
 
 function storeAccInMemory(PC){
-    _CPU.Acc = _RAM.readMemory(PC);
+    _RAM.writeMemory(PC, _CPU.Acc);
+    console.log("readin memory " +  _RAM.readMemory(PC));
 }
 
 function addWithCarry(PC){
-    //herp
+    _CPU.Acc += _RAM.readMemory(PC);
 }
 
 function loadXregWithConstant(constant){
-    _CPU.Xreg = constant;
+    _CPU.Xreg = parseInt(constant, 16);
+    console.log("loadin x reg with constant : " + _CPU.Xreg);
 }
 
 function loadXregFromMemory(PC){
@@ -46,11 +50,13 @@ function loadXregFromMemory(PC){
 }
 
 function loadYregWithConstant(constant){
-    _CPU.Yreg = constant;
+    _CPU.Yreg = parseInt(constant, 16);
 }
 
 function loadYregFromMemory(PC){
     _CPU.Yreg = _RAM.readMemory(PC);
+    console.log("mem = " + _RAM.readMemory(PC));
+    console.log("loadin y reg from mem : " + _CPU.Yreg);
 }
 
 function noOp(){
@@ -58,7 +64,7 @@ function noOp(){
 }
 
 function brk(){
-    _//wot
+    //wot
 }
 
 function compare(PC){
@@ -84,10 +90,11 @@ function increment(PC){
 }
 
 function system(){
-    if (_CPU.Xreg == 1){
+    console.log("sysm call, x reg = " + parseInt(_CPU.Xreg, 10));
+    if (_parseInt(_CPU.Xreg, 10) == 1){
         _StdIn.putText("Y register: " + parseInt(_CPU.Yreg, 16));
     }
-    if (_CPU.Xreg == 2){
+    if (_parseInt(_CPU.Xreg, 10) == 2){
         _StdIn.putText("Y register: " + _CPU.Yreg.toString(16));
     }
 }

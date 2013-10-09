@@ -37,38 +37,36 @@ function PCB() {
 
     	while(this.PC < (this.base + this.offset)){
     		instructionString = this.readInstruction();
-    		console.log(instructionString);
-    		console.log(_OpCodes);
-    		if (instructionString in _OpCodes){
+    		if (instructionString in OP_CODES){
     			// Get the instruction value in the opcodes dictionary
-    			instruction = _OpCodes[instructionString];
+    			instruction = OP_CODES[instructionString];
     			// Determine the arguments based on the instruction's expected arguments
     			arguments = this.readArguments(instruction.args);
     			// Execute the instruction
-    			console.log(instruction);
     			var funct = instruction.funct;
-    			console.log(funct);
     			funct(arguments);
-
-    			//debugging
-    			console.log("Accumulator: " + _CPU.Acc);
     		}
     		else{
     			console.log("fail");
     		}
     	}
+        _StdIn.advanceLine();
+        _StdIn.putText("Done.");
     };
 
     this.readInstruction = function(){
-    	console.log("readin");
     	return _RAM.readMemory(this.PC++) + _RAM.readMemory(this.PC++);
     };
     
     this.readArguments = function(length){
     	var args = "";
-    	for(var i = 0; i < length; i++){
-    		args += _RAM.readMemory(this.PC++);
-    	}
+    	for(var i = length/2 - 1; i >= 0; i--){
+            // Get two bytes at a time, starting from the right
+    		  args += _RAM.readMemory(this.PC + (i * 2) ) + _RAM.readMemory(this.PC + (i * 2 + 1));
+        }
+        this.PC += length;
+
+        console.log("args " + args);
     	return args;
     }
 }
