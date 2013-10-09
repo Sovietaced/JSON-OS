@@ -37,6 +37,7 @@ function PCB() {
 
     	while(this.PC < (this.base + this.offset)){
     		instructionString = this.readInstruction();
+            console.log("INSTRUCTION STRING : " + instructionString);
     		if (instructionString in OP_CODES){
     			// Get the instruction value in the opcodes dictionary
     			instruction = OP_CODES[instructionString];

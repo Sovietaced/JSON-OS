@@ -348,9 +348,15 @@ function shellLoad(args)
 {   
     // get value from html text area
     var user_input = $('textarea#taProgramInput').val();
+    // Remove whitespace
+    user_input = user_input.replace(/ /g,'');
+    // Remove new lines
+    user_input = user_input.replace(/(\r\n|\n|\r)/gm,"");
+
     if (user_input.match(/^[0-9A-F]/i)) {
-        // Strip
-        user_input = user_input.replace(/ /g,'');
+
+        console.log(user_input);
+
             var result = krnCreateProcess(user_input);
             if(!result){
                 _StdIn.putText("Program loaded with PID " + result );

@@ -76,17 +76,21 @@ function compare(PC){
 
 function branch(numBytes){
     if( _CPU.Zflag == 0){
-        _CPU.PC += numBytes;
+        _CPU.PC += parseInt(numBytes, 16);
     }
 }
 
 function increment(PC){
     // Get value and parse as integer
     var value = parseInt(_RAM.readMemory(PC), 16);
+
+    console.log("before increment " + _RAM.readMemory(PC));
     // Increment value 
     value++;
     // Parse value as hex string and write back to memory
     _RAM.writeMemory(PC, value.toString(16));
+
+    console.log("after increment " + _RAM.readMemory(PC));
 }
 
 function system(){
