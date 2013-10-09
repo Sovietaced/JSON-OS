@@ -334,7 +334,9 @@ function shellRun(args)
         for (var i = 0; i < _Processes.length; i++ ){
             if (_Processes[i].getPid() == parseInt(pid)){
                 _StdIn.putText("Found process with PID " + pid + ". Running...");
-                _Processes[i].run();
+                var result = krnRunProcess(_Processes[i]);
+                _StdIn.advanceLine();
+                _StdIn.putText("Done");
                 return;
             }
         }
@@ -357,15 +359,16 @@ function shellLoad(args)
 
         console.log(user_input);
 
-            var result = krnCreateProcess(user_input);
-            if(!result){
-                _StdIn.putText("Program loaded with PID " + result );
-            }
-            // Clear text area
-            $('textarea#taProgramInput').val("");
+        var result = krnCreateProcess(user_input);
+        if(!result){
+            _StdIn.putText("Program loaded with PID " + result );
         } else {
             _StdIn.putText("User input invalid, try again.");
         }
+
+        // Clear text area
+        $('textarea#taProgramInput').val("");
+    }
 }
 
 function shellStatus(args)

@@ -5,20 +5,20 @@
  * ----------------- */
 
 var OP_CODES = {
-    'A9': { args: 2, funct: loadAccWithConstant },
-    'AD': { args: 4, funct: loadAccFromMemory },
-    '8D': { args: 4, funct: storeAccInMemory },
-    '6D': { args: 4, funct: addWithCarry },
-    'A2': { args: 2, funct: loadXregWithConstant },
-    'AE': { args: 4, funct: loadXregFromMemory },
-    'A0': { args: 2, funct: loadYregWithConstant },
-    'AC': { args: 4, funct: loadYregFromMemory },
-    'EA': { args: 0, funct: noOp },
-    '00': { args: 0, funct: brk },
-    'EC': { args: 4, funct: compare },
-    'D0': { args: 2, funct: branch },
-    'EE': { args: 4, funct: increment },
-    'FF': { args: 0, funct: system }
+    'A9': { argsLen: 1, funct: loadAccWithConstant },
+    'AD': { argsLen: 2, funct: loadAccFromMemory },
+    '8D': { argsLen: 2, funct: storeAccInMemory },
+    '6D': { argsLen: 2, funct: addWithCarry },
+    'A2': { argsLen: 1, funct: loadXregWithConstant },
+    'AE': { argsLen: 2, funct: loadXregFromMemory },
+    'A0': { argsLen: 1, funct: loadYregWithConstant },
+    'AC': { argsLen: 2, funct: loadYregFromMemory },
+    'EA': { argsLen: 0, funct: noOp },
+    '00': { argsLen: 0, funct: brk },
+    'EC': { argsLen: 2, funct: compare },
+    'D0': { argsLen: 1, funct: branch },
+    'EE': { argsLen: 2, funct: increment },
+    'FF': { argsLen: 0, funct: system }
 };
 
 function loadAccWithConstant(constant){
@@ -68,9 +68,11 @@ function brk(){
 }
 
 function compare(PC){
+    console.log("compare - value of x reg : " + _CPU.Xreg);
     var value = _RAM.readMemory(PC);
+    console.log("compare - value of memory : " + _RAM.readMemory(PC));
     if (value == _CPU.Xreg){
-        _CPU.Zflag = true;
+        _CPU.Zflag = 1;
     }
 }
 

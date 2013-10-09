@@ -33,6 +33,48 @@ function Cpu() {
     this.cycle = function() {
         krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
-        // Do the real work here. Be sure to set this.isExecuting appropriately.
+        if(this.execute(this.fetch()) == false){
+          this.isExecuting = false;
+          console.log("stopped");
+          _RAM.dumpMemory();
+        }
     };
+
+    this.execute = function(instruction){
+      var instructionData = null;
+      var arguments = null;
+
+      console.log("INSTRUCTION STRING : " + instruction);
+      if (instruction in OP_CODES){
+        // Get the instruction value in the opcodes dictionary
+        instructionData = OP_CODES[instruction];
+        // Determine the arguments based on the instruction's expected arguments
+        arguments = this.readArguments(instructionData.argsLen);
+        // Execute the instruction
+        instructionData.funct(arguments);
+        return true;
+      }
+      else{
+       return false;
+      }
+    };
+
+    this.fetch = function(){
+      console.log(this.PC);
+      return _RAM.readMemory(this.PC++);
+    };
+    
+    this.readArguments = function(length){
+      var args = "";
+
+      for(var i = length - 1; i >= 0; i--){
+        // Get two bytes at a time, starting from the right
+        args += _RAM.readMemory(this.PC + i);
+      }
+
+      this.PC += length;
+
+      console.log("args " + args);
+      return args;
+    }
 }

@@ -163,7 +163,6 @@ function krnCreateProcess(program)
   
   // Attempt to allocate memory for program
   if(_memoryManager.allocate(program)){
-    console.log("yay");
     process = new PCB();
     process.init(_Processes.length, program.length); // Create process by passing in ID
     _Processes.push(process);
@@ -176,6 +175,11 @@ function krnCreateProcess(program)
   }
 };
 
+function krnRunProcess(pcb)
+{
+  _CPU.PC = pcb.getBase();
+  _CPU.isExecuting = true;
+};
 
 //
 // OS Utility Routines
@@ -205,7 +209,6 @@ function krnTrace(msg)
 function krnTrapError(msg)
 {
     hostLog("OS ERROR - TRAP: " + msg);
-    // TODO: Display error on console, perhaps in some sort of colored screen. (Perhaps blue?)
     _StdIn.bsod(msg);
     krnShutdown();
 }
