@@ -97,10 +97,12 @@ function increment(PC){
 
 function system(){
     console.log("sysm call, x reg = " + parseInt(_CPU.Xreg, 10));
-    if (_parseInt(_CPU.Xreg, 10) == 1){
+    if (parseInt(_CPU.Xreg, 10) == 1){
+        _StdIn.advanceLine();
         _StdIn.putText("Y register: " + parseInt(_CPU.Yreg, 16));
     }
-    if (_parseInt(_CPU.Xreg, 10) == 2){
+    if (parseInt(_CPU.Xreg, 10) == 2){
+        _StdIn.advanceLine();
         _StdIn.putText("Y register: " + _CPU.Yreg.toString(16));
     }
 }
