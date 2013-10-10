@@ -110,16 +110,14 @@ function CLIconsole() {
         }
         // Print the 00 terminated string located in memory at location Yreg
         if (_CPU.Xreg == 2){
-            var memLocation = _CPU.Yreg;
-            console.log("memlocation " + memLocation);
-            var memory = _RAM.readMemory(memLocation);
-            console.log("MEMORY " + memory);
+            // Get value from memory
+            var memory = _memoryManager.readMemory(memLocation);
             var zeroTermString = "";
+            // Continue while not 00 terminated
             while (memory != "00"){
-              zeroTermString += String.fromCharCode(parseInt(memory,16));
-              memory = _RAM.readMemory(++memLocation);
+              zeroTermString += String.fromCharCode(hexToInt(memory));
+              memory = _memoryManager.readMemory(++memLocation);
             }
-            console.log("ZERO TERM STRING " + zeroTermString); 
             _StdIn.advanceLine();
             _StdIn.putText(zeroTermString);
         }
