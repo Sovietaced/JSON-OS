@@ -123,7 +123,6 @@ function CLIconsole() {
         }
     };
 
-
     this.updateStatus = function(status) {
 
       // Update time
