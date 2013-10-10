@@ -59,7 +59,7 @@ function Cpu() {
 
     // Fetches the instruction at the PC
     this.fetch = function(){
-      return _RAM.readMemory(this.PC++);
+      return _memoryManager.readMemory(this.PC++);
     };
     
     // Fetches the arguments for the previous instruction, normally 1 or 2 bytes at a time
@@ -68,7 +68,7 @@ function Cpu() {
 
       for(var i = length - 1; i >= 0; i--){
         // Get two bytes at a time, starting from the right
-        args += _RAM.readMemory(this.PC + i);
+        args += _memoryManager.readMemory(this.PC + i);
       }
 
       // Increment the PC for how many bytes we took

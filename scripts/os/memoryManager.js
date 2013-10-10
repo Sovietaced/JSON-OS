@@ -26,14 +26,22 @@ function MemoryManager() {
 		return true;
     };
 
+  // Nice help that does base conversions
   this.readValue = function(PC){
     return parseInt(_RAM.readMemory(parseInt(PC, 16)), 16);
   };
 
+   // Nice help that does base conversions
+  this.readMemory = function(PC){
+    return _RAM.readMemory(PC);
+  };
+
+  // Nice help that does base conversions
   this.writeValue = function(PC, value){
     _RAM.writeMemory(parseInt(PC, 16), value.toString(16));
   };
   
+  // Updates external display
   this.updateDisplay = function(){
 
       // Get the memory state
@@ -45,6 +53,7 @@ function MemoryManager() {
       // Remove table body rows
       $("#memory").empty(); 
 
+      // Render HTML and push it
       for (var row in matrixMemory) {
         var data = "";
          for (var value in matrixMemory[row]){
@@ -52,7 +61,5 @@ function MemoryManager() {
          }
          $('#memory').append('<tr>' + data + '</tr>');
       }
-      
-
   }; 
 }
