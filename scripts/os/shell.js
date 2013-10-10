@@ -335,8 +335,6 @@ function shellRun(args)
             if (_Processes[i].getPid() == parseInt(pid)){
                 _StdIn.putText("Found process with PID " + pid + ". Running...");
                 var result = krnRunProcess(_Processes[i]);
-                _StdIn.advanceLine();
-                _StdIn.putText("Done");
                 return;
             }
         }
@@ -363,11 +361,13 @@ function shellLoad(args)
         if(!result){
             _StdIn.putText("Program loaded with PID " + result );
         } else {
-            _StdIn.putText("User input invalid, try again.");
+            _StdIn.putText("Failed to load program.");
         }
-
-        // Clear text area
+         // Clear text area
         $('textarea#taProgramInput').val("");
+    }
+    else{
+        _StdIn.putText("User input must be in Hex.");
     }
 }
 

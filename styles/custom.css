@@ -1,0 +1,17 @@
+
+.barrel_roll {
+-webkit-transition: -webkit-transform 4s ease;
+-webkit-transform: rotate(360deg);
+-moz-transition: -moz-transform 4s ease;
+-moz-transform: rotate(360deg);
+-o-transition: -o-transform 4s ease;
+-o-transform: rotate(360deg);
+transition: transform 4s ease;
+transform: rotate(360deg);
+}
+
+#display {
+	background-color:#DFDBC3;
+	border: 2px solid red; 
+	cursor: default;
+}
