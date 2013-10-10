@@ -35,3 +35,20 @@ function rot13(str) {   // An easy-to understand implementation of the famous an
     }
     return retVal;
 }
+
+// Takes an array and converts it to a two dimensional array (matrix)
+function listToMatrix(list, elementsPerSubArray) {
+    var matrix = [], i, k;
+
+    for (i = 0, k = -1; i < list.length; i++) {
+        if (i % elementsPerSubArray === 0) {
+            k++;
+            matrix[k] = [];
+            matrix[k].push("0x" + i.toString(16));
+        }
+
+        matrix[k].push(list[i]);
+    }
+
+    return matrix;
+}

@@ -27,5 +27,26 @@ function MemoryManager() {
 		_RAM.dumpMemory();
 		return true;
     };
-    
+  
+  this.updateDisplay = function(){
+
+      // Get the memory state
+      var memory = _RAM.memory;
+
+      // Convert the memory array to a matrix, with memory address numbas
+      var matrixMemory = listToMatrix(memory, 8);
+
+      // Remove table body rows
+      $("#memory").empty(); 
+
+      for (var row in matrixMemory) {
+        var data = "";
+         for (var value in matrixMemory[row]){
+            data += "<td> " + matrixMemory[row][value] + "</td>";
+         }
+         $('#memory').append('<tr>' + data + '</tr>');
+      }
+      
+
+  }; 
 }

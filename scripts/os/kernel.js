@@ -49,6 +49,10 @@ function krnBootstrap()      // Page 8.
    _OsShell = new Shell();
    _OsShell.init();
 
+     // initialize displays
+     _memoryManager.updateDisplay();
+     _CPU.updateDisplay();
+
    // Finally, initiate testing.
    if (_GLaDOS) {
       _GLaDOS.afterStartup();
@@ -88,6 +92,8 @@ function krnOnCPUClockPulse()
     else if (_CPU.isExecuting) // If there are no interrupts then run one CPU cycle if there is anything being processed.
     {
         _CPU.cycle();
+        _memoryManager.updateDisplay();
+        _CPU.updateDisplay();
     }    
     else                       // If there are no interrupts and there is nothing being executed then just be idle.
     {
