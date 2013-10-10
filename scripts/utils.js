@@ -44,6 +44,7 @@ function listToMatrix(list, elementsPerSubArray) {
         if (i % elementsPerSubArray === 0) {
             k++;
             matrix[k] = [];
+            // Push the memory address in hex 
             matrix[k].push("0x" + i.toString(16));
         }
 
