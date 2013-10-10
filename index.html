@@ -52,61 +52,69 @@
     </div>
     <div class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
-        <li>
+        <li id="btnStartOS">
           <a href="#" onclick="hostBtnStartOS_click(this);">START</a>
         </li>
-        <li>
+        <li id="btnHaltOS">
         <a href="#" onclick="hostBtnHaltOS_click(this);">HALT</a>
         </li>
-        <li>
+        <li id="btnReset">
         <a href="#" onclick="hostBtnReset_click(this);">RESET</a>
         </li>
       </ul>
     </div>
   </div>
 </div>
-
-<div class="container">
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
-      <canvas id="display"
-              width="500px"
-              height="500px"
-              tabindex="3">
-      </canvas>
-   </div>
-
-   <div id="divLog" style="margin-left:520px;">
-      <label>
-         Log
-         <br>
-         <textarea name="taLog"
-                   id  ="taLog"
-                   rows="26"
-                   cols="48"
-         ></textarea>
-      </label>
-   </div>
-
-   <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="48"
-         ></textarea>
-      </label>
-   </div>
+<div class="container" style="margin-top: 60px;">
+  <div class="row">
+    <div class="col-md-6">
+          <div id="divConsole">
+          <label>
+             Console
+             <br>
+            <canvas id="display" 
+                    width="500" 
+                    height="500" 
+                    tabindex="3"></canvas>
+          </label>  
+          </div>
+        </div>
+    <div class="col-md-6">
+       <div id="divLog">
+          <label>
+             Log
+             <br>
+             <textarea name="taLog"
+                       id  ="taLog"
+                       rows="26"
+                       cols="48"
+                       style="border-style:solid; border-color: white; color: white; background-color: black;"
+             ></textarea>
+          </label>
+       </div>
+       <div id="divUserProgramInput;">
+          <label>
+             User Program Input
+             <br>
+             <textarea name="taProgramInput"
+                       id  ="taProgramInput"
+                       rows="8"
+                       cols="48"
+                       style="border-style:solid; border-color: white; color: white; background-color: black;"
+             ></textarea>
+          </label>
+       </div>
+      </div>
    </div>
 </div>
 
-<p class="footerText" style="clear:both;">
-   <br>
-   Copyright &copy; 2008 - 2013 No Rights Reserved.
-   <br>
-   Reproduction is prohibited without the express written consent of
-   Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
-</p>
+<div class="row">
+  <div class="span12"> 
+    <center> <!-- yeah i use center tags, dealwithit -->
+      <a href="http://kopimi.com"><img src="http://www.kopimi.com/kopimi/k/kopimi_dialektik.gif" />  </a>
+      </center>  
+    </div>
+  </div>
+</div>
 </body>
 </html>
