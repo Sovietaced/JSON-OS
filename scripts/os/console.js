@@ -116,7 +116,7 @@ function CLIconsole() {
             console.log("MEMORY " + memory);
             var zeroTermString = "";
             while (memory != "00"){
-              zeroTermString += String.fromCharCode(memory);
+              zeroTermString += String.fromCharCode(parseInt(memory,16));
               memory = _RAM.readMemory(++memLocation);
             }
             console.log("ZERO TERM STRING " + zeroTermString); 
