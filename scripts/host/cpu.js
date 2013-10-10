@@ -107,35 +107,35 @@ function loadAccWithConstant(constant){
 }
 
 function loadAccFromMemory(PC){
-    _CPU.Acc = _RAM.readMemory(PC);
+    _CPU.Acc = _memoryManager.readValue(PC);
     console.log("Accumulator: " + _CPU.Acc)
 }
 
 function storeAccInMemory(PC){
-    _RAM.writeMemory(PC, _CPU.Acc);
-    console.log("readin memory " +  _RAM.readMemory(PC));
+    _RAM.writeMemory(parseInt(PC, 10), _CPU.Acc.toString(16));
+    console.log("readin memory " +  _RAM.readMemory(parseInt(PC, 10)));
 }
 
 function addWithCarry(PC){
-    _CPU.Acc += _RAM.readMemory(PC);
+    _CPU.Acc += _memoryManager.readValue(PC);
 }
 
 function loadXregWithConstant(constant){
-    _CPU.Xreg = parseInt(constant, 16);
+    _CPU.Xreg = parseInt(constant, 10);
     console.log("loadin x reg with constant : " + _CPU.Xreg);
 }
 
 function loadXregFromMemory(PC){
-    _CPU.Xreg = _RAM.readMemory(PC);
+    _CPU.Xreg = _memoryManager.readValue(PC);
 }
 
 function loadYregWithConstant(constant){
-    _CPU.Yreg = parseInt(constant, 16);
+    _CPU.Yreg = parseInt(constant, 10);
 }
 
 function loadYregFromMemory(PC){
-    _CPU.Yreg = _RAM.readMemory(PC);
-    console.log("mem = " + _RAM.readMemory(PC));
+    _CPU.Yreg = _memoryManager.readValue(PC);
+    console.log("mem = " + _memoryManager.readValue(PC));
     console.log("loadin y reg from mem : " + _CPU.Yreg);
 }
 
@@ -155,30 +155,34 @@ function brk(){
 function compare(PC){
   console.log("PC " + PC)
     console.log("compare - value of x reg : " + _CPU.Xreg);
-    var value = _RAM.readMemory(PC);
-    console.log("compare - value of memory : " + _RAM.readMemory(PC));
+    var value = _memoryManager.readValue(PC);
+    console.log("compare - value of memory : " + _memoryManager.readValue(PC));
     if (value == _CPU.Xreg){
         _CPU.Zflag = 1;
     }
 }
 
-function branch(numBytes){
+function branch(position){
     if( _CPU.Zflag == 0){
-        _CPU.PC += parseInt(numBytes, 16);
+        _CPU.PC += parseInt(position, 10);
+        if (_CPU.PC >= 256) {
+          // Memory out of bounds, should loop back over
+          this.PC -= 256;
+        }
     }
 }
 
 function increment(PC){
     // Get value and parse as integer
-    var value = parseInt(_RAM.readMemory(PC), 16);
+    var value = _memoryManager.readValue(PC);
 
-    console.log("before increment " + _RAM.readMemory(PC));
+    console.log("before increment " + value);
     // Increment value 
     value++;
     // Parse value as hex string and write back to memory
-    _RAM.writeMemory(PC, value.toString(16));
+    _RAM.writeMemory(parseInt(PC, 10), value.toString(16));
 
-    console.log("after increment " + _RAM.readMemory(PC));
+    console.log("after increment " + _memoryManager.readValue(PC));
 }
 
 function system(){

@@ -104,18 +104,19 @@ function CLIconsole() {
     // Handles system call from 6502 instruction set
     this.handleSystemCall = function() {
       // Print the Y register
-       if (parseInt(_CPU.Xreg, 10) == 1){
+       if (_CPU.Xreg == 1){
         _StdIn.advanceLine();
-        _StdIn.putText("Y Register: " + parseInt(_CPU.Yreg, 16));
+        _StdIn.putText(_CPU.Yreg.toString());
         }
         // Print the 00 terminated string located in memory at location Yreg
-        if (parseInt(_CPU.Xreg, 10) == 2){
-            var memLocation = parseInt(_CPU.Yreg, 10);
+        if (_CPU.Xreg == 2){
+            var memLocation = _CPU.Yreg;
+            console.log("memlocation " + memLocation);
             var memory = _RAM.readMemory(memLocation);
             console.log("MEMORY " + memory);
             var zeroTermString = "";
             while (memory != "00"){
-              zeroTermString += String.fromCharCode(parseInt(memory, 10));
+              zeroTermString += String.fromCharCode(memory);
               memory = _RAM.readMemory(++memLocation);
             }
             console.log("ZERO TERM STRING " + zeroTermString); 
