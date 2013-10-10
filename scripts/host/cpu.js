@@ -32,6 +32,7 @@ function Cpu() {
     
     this.cycle = function() {
         krnTrace("CPU cycle");
+        this.updateDisplay();
         // TODO: Accumulate CPU usage and profiling statistics here.
         if(this.execute(this.fetch()) == false){
           this.isExecuting = false;
@@ -76,5 +77,13 @@ function Cpu() {
 
       console.log("args " + args);
       return args;
-    }
+    };
+
+    this.updateDisplay = function(){
+      $('#PC').val(this.PC);
+      $('#Acc').val(this.Acc);
+      $('#Xreg').val(this.Xreg);
+      $('#Yreg').val(this.Yreg);
+      $('#Zflag').val(this.Zflag);
+    };
 }
