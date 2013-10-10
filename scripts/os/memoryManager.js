@@ -23,8 +23,6 @@ function MemoryManager() {
 	    		_CPU.PC++;
 	    	}
 		}
-		// debugging
-		_RAM.dumpMemory();
 		return true;
     };
   

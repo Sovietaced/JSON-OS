@@ -97,9 +97,18 @@ function krnOnCPUClockPulse()
         _CPU.updateDisplay();
     }    
     else if (_runningProcess != null && !_CPU.isExecuting){
-      // print PCB status
+
+      // Find the process
+      var process = krnFindProcess(_runningProcess);
+      // We know that it is finished executing, so capture the state and print the details
+      if(process){
+        process.captureState();
+        process.updateDisplay();
+        _StdIn.advanceLine();
+        // Print the prompt
+        _OsShell.putPrompt();
+      }
       _runningProcess = null;
-      console.log("swag");
     } 
     else                     // If there are no interrupts and there is nothing being executed then just be idle.
     {
@@ -142,6 +151,9 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case KEYBOARD_IRQ: 
             krnKeyboardDriver.isr(params);   // Kernel mode device driver
             _StdIn.handleInput();
+            break;
+        case SYS_OPCODE_IRQ:
+            _StdIn.handleSystemCall();
             break;
         default: 
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

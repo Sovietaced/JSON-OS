@@ -101,6 +101,29 @@ function CLIconsole() {
        }
     };
 
+    // Handles system call from 6502 instruction set
+    this.handleSystemCall = function() {
+      // Print the Y register
+       if (parseInt(_CPU.Xreg, 10) == 1){
+        _StdIn.advanceLine();
+        _StdIn.putText("Y Register: " + parseInt(_CPU.Yreg, 16));
+        }
+        // Print the 00 terminated string located in memory at location Yreg
+        if (parseInt(_CPU.Xreg, 10) == 2){
+            var memLocation = parseInt(_CPU.Yreg, 10);
+            var memory = _RAM.readMemory(memLocation);
+            console.log("MEMORY " + memory);
+            var zeroTermString = "";
+            while (memory != "00"){
+              zeroTermString += String.fromCharCode(parseInt(memory, 10));
+              memory = _RAM.readMemory(++memLocation);
+            }
+            console.log("ZERO TERM STRING " + zeroTermString); 
+            _StdIn.advanceLine();
+            _StdIn.putText(zeroTermString);
+        }
+    };
+
 
     this.updateStatus = function(status) {
 
@@ -180,7 +203,7 @@ function CLIconsole() {
       _DrawingContext.fillRect(0, 0, _Canvas.width, _Canvas.height);
 
        // Draw the text in the middle in some big fat font
-       _DrawingContext.font = '40pt Calibri';
+       _DrawingContext.font = '20pt Calibri';
        _DrawingContext.fillStyle="white";
       _DrawingContext.fillText(msg, (100), (_Canvas.height/2));
     };

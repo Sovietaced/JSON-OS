@@ -4,12 +4,12 @@
    Requires global.js.
    
    Routines for the host CPU simulation, NOT for the OS itself.  
-   In this manner, it's A LITTLE BIT like a hypervisor,
+   In _CPU manner, it's A LITTLE BIT like a hypervisor,
    in that the Document environment inside a browser is the "bare metal" (so to speak) for which we write code
    that hosts our client OS. But that analogy only goes so far, and the lines are blurred, because we are using
    JavaScript in both the host and client environments.
 
-   This code references page numbers in the text book: 
+   _CPU code references page numbers in the text book: 
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
 
@@ -35,8 +35,6 @@ function Cpu() {
         // TODO: Accumulate CPU usage and profiling statistics here.
         if(this.execute(this.fetch()) == false){
           this.isExecuting = false;
-          console.log("stopped");
-          _RAM.dumpMemory();
         }
     };
 
@@ -60,7 +58,6 @@ function Cpu() {
     };
 
     this.fetch = function(){
-      console.log(this.PC);
       return _RAM.readMemory(this.PC++);
     };
     
@@ -143,14 +140,20 @@ function loadYregFromMemory(PC){
 }
 
 function noOp(){
-    //wot
+    // NO operation
 }
 
 function brk(){
-    //wot
+   // Find the running program
+   var process = krnFindProcess(_runningProcess);
+   if (process){
+    process.captureState();
+    _CPU.isExecuting = false;
+   }
 }
 
 function compare(PC){
+  console.log("PC " + PC)
     console.log("compare - value of x reg : " + _CPU.Xreg);
     var value = _RAM.readMemory(PC);
     console.log("compare - value of memory : " + _RAM.readMemory(PC));
@@ -179,14 +182,7 @@ function increment(PC){
 }
 
 function system(){
-    console.log("sysm call, x reg = " + parseInt(_CPU.Xreg, 10));
-    if (parseInt(_CPU.Xreg, 10) == 1){
-        _StdIn.advanceLine();
-        _StdIn.putText("Y Register: " + parseInt(_CPU.Yreg, 16));
-    }
-    if (parseInt(_CPU.Xreg, 10) == 2){
-        _StdIn.advanceLine();
-        _StdIn.putText("Y Register: " + _CPU.Yreg.toString(16));
-    }
+   _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ));
+
   }
 }

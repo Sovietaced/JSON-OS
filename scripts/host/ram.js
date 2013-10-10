@@ -19,7 +19,7 @@ function Ram() {
     // wrtires 0s to all bytes
     this.clearMemory = function() {
        for (var i = 0; i < this.memory.length; i++){
-          this.memory[i] = 0;
+          this.memory[i] = "00";
         }
     };
 
