@@ -112,8 +112,8 @@ function loadAccFromMemory(PC){
 }
 
 function storeAccInMemory(PC){
-    _RAM.writeMemory(parseInt(PC, 10), _CPU.Acc.toString(16));
-    console.log("readin memory " +  _RAM.readMemory(parseInt(PC, 10)));
+    _memoryManager.writeValue(PC, _CPU.Acc);
+    console.log("readin memory " +  _memoryManager.readValue(PC));
 }
 
 function addWithCarry(PC){
@@ -121,8 +121,9 @@ function addWithCarry(PC){
 }
 
 function loadXregWithConstant(constant){
-    _CPU.Xreg = parseInt(constant, 10);
-    console.log("loadin x reg with constant : " + _CPU.Xreg);
+  console.log("constant " + constant);
+    _CPU.Xreg = parseInt(constant, 16);
+    console.log("loaded x reg with constant : " + _CPU.Xreg);
 }
 
 function loadXregFromMemory(PC){
@@ -130,13 +131,13 @@ function loadXregFromMemory(PC){
 }
 
 function loadYregWithConstant(constant){
-    _CPU.Yreg = parseInt(constant, 10);
+    _CPU.Yreg = parseInt(constant, 16);
 }
 
 function loadYregFromMemory(PC){
     _CPU.Yreg = _memoryManager.readValue(PC);
     console.log("mem = " + _memoryManager.readValue(PC));
-    console.log("loadin y reg from mem : " + _CPU.Yreg);
+    console.log("loaded y reg from mem : " + _CPU.Yreg);
 }
 
 function noOp(){
@@ -159,16 +160,22 @@ function compare(PC){
     console.log("compare - value of memory : " + _memoryManager.readValue(PC));
     if (value == _CPU.Xreg){
         _CPU.Zflag = 1;
+        console.log("Z flag set");
+    }
+    else{
+       _CPU.Zflag = 0;
+       console.log("Z flag not set");
     }
 }
 
-function branch(position){
+function branch(PC){
     if( _CPU.Zflag == 0){
-        _CPU.PC += parseInt(position, 10);
+        _CPU.PC += parseInt(PC, 16);
         if (_CPU.PC >= 256) {
           // Memory out of bounds, should loop back over
-          this.PC -= 256;
+          _CPU.PC -= 256;
         }
+        console.log("PC AFTER " + _CPU.PC);
     }
 }
 
@@ -180,7 +187,7 @@ function increment(PC){
     // Increment value 
     value++;
     // Parse value as hex string and write back to memory
-    _RAM.writeMemory(parseInt(PC, 10), value.toString(16));
+   _memoryManager.writeValue(PC, value);
 
     console.log("after increment " + _memoryManager.readValue(PC));
 }

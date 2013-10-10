@@ -27,11 +27,11 @@ function MemoryManager() {
     };
 
   this.readValue = function(PC){
-    return parseInt(_RAM.readMemory(parseInt(PC, 10)), 10);
+    return parseInt(_RAM.readMemory(parseInt(PC, 16)), 16);
   };
 
   this.writeValue = function(PC, value){
-    _RAM.writeMemory(parseInt(PC, 10), value.toString(16));
+    _RAM.writeMemory(parseInt(PC, 16), value.toString(16));
   };
   
   this.updateDisplay = function(){
