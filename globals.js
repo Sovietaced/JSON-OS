@@ -15,6 +15,7 @@ var APP_NAME = "JSON-OS";  // 'cause I was at a loss for a better name.
 var APP_VERSION = "0.01";   // What did you expect?
 
 var CPU_CLOCK_INTERVAL = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
+var RAM_SIZE = 256; // 256 Bytes
 
 var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                     // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
@@ -24,7 +25,7 @@ var SYS_OPCODE_IRQ = 2;
 //
 // Global Variables
 //
-var _CPU = null;
+var _CPU = null;       
 
 var _OSclock = 0;       // Page 23.
 

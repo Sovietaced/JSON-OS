@@ -53,3 +53,7 @@ function listToMatrix(list, elementsPerSubArray) {
 
     return matrix;
 }
+
+function hexToInt(hexString){
+    return parseInt(hexString, 16);
+}

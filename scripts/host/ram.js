@@ -6,9 +6,7 @@
    ------------ */
 
 function Ram() {
-
-    this.RAM_SIZE = 256;                     // 256 bytes
-    this.memory = new Array(this.RAM_SIZE);      // memory array
+    this.memory = new Array(RAM_SIZE);      // memory array
     
     this.init = function() {
         
@@ -19,7 +17,7 @@ function Ram() {
     // wrtires 0s to all bytes
     this.clearMemory = function() {
        for (var i = 0; i < this.memory.length; i++){
-          this.memory[i] = "00";
+          this.memory[i] = "00" ;
         }
     };
 

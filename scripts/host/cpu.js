@@ -39,10 +39,10 @@ function Cpu() {
     };
 
     this.execute = function(instruction){
-      var instructionData = null;
+      var instructionData = null; // The hash from OP_CODES
       var arguments = null;
 
-      console.log("INSTRUCTION STRING : " + instruction);
+      // Check for valid instruction
       if (instruction in OP_CODES){
         // Get the instruction value in the opcodes dictionary
         instructionData = OP_CODES[instruction];
@@ -57,10 +57,12 @@ function Cpu() {
       }
     };
 
+    // Fetches the instruction at the PC
     this.fetch = function(){
       return _RAM.readMemory(this.PC++);
     };
     
+    // Fetches the arguments for the previous instruction, normally 1 or 2 bytes at a time
     this.readArguments = function(length){
       var args = "";
 
@@ -69,12 +71,13 @@ function Cpu() {
         args += _RAM.readMemory(this.PC + i);
       }
 
+      // Increment the PC for how many bytes we took
       this.PC += length;
 
-      console.log("args " + args);
       return args;
     };
 
+    // Updates browser display
     this.updateDisplay = function(){
       $('#PC').html(this.PC);
       $('#Acc').html(this.Acc);
@@ -102,18 +105,15 @@ var OP_CODES = {
 };
 
 function loadAccWithConstant(constant){
-    _CPU.Acc = parseInt(constant, 16);
-    console.log("Accumulator: " + _CPU.Acc)
+    _CPU.Acc = hexToInt(constant);
 }
 
 function loadAccFromMemory(PC){
     _CPU.Acc = _memoryManager.readValue(PC);
-    console.log("Accumulator: " + _CPU.Acc)
 }
 
 function storeAccInMemory(PC){
     _memoryManager.writeValue(PC, _CPU.Acc);
-    console.log("readin memory " +  _memoryManager.readValue(PC));
 }
 
 function addWithCarry(PC){
@@ -121,9 +121,7 @@ function addWithCarry(PC){
 }
 
 function loadXregWithConstant(constant){
-  console.log("constant " + constant);
-    _CPU.Xreg = parseInt(constant, 16);
-    console.log("loaded x reg with constant : " + _CPU.Xreg);
+    _CPU.Xreg = hexToInt(constant);
 }
 
 function loadXregFromMemory(PC){
@@ -131,13 +129,11 @@ function loadXregFromMemory(PC){
 }
 
 function loadYregWithConstant(constant){
-    _CPU.Yreg = parseInt(constant, 16);
+    _CPU.Yreg = hexToInt(constant);
 }
 
 function loadYregFromMemory(PC){
     _CPU.Yreg = _memoryManager.readValue(PC);
-    console.log("mem = " + _memoryManager.readValue(PC));
-    console.log("loaded y reg from mem : " + _CPU.Yreg);
 }
 
 function noOp(){
@@ -147,6 +143,7 @@ function noOp(){
 function brk(){
    // Find the running program
    var process = krnFindProcess(_runningProcess);
+   // If found stop it.
    if (process){
     process.captureState();
     _CPU.isExecuting = false;
@@ -154,46 +151,37 @@ function brk(){
 }
 
 function compare(PC){
-  console.log("PC " + PC)
-    console.log("compare - value of x reg : " + _CPU.Xreg);
     var value = _memoryManager.readValue(PC);
-    console.log("compare - value of memory : " + _memoryManager.readValue(PC));
     if (value == _CPU.Xreg){
         _CPU.Zflag = 1;
-        console.log("Z flag set");
     }
     else{
        _CPU.Zflag = 0;
-       console.log("Z flag not set");
     }
 }
 
-function branch(PC){
+function branch(position){
     if( _CPU.Zflag == 0){
-        _CPU.PC += parseInt(PC, 16);
+      // Increment PC number of positions
+        _CPU.PC += hexToInt(position);
         if (_CPU.PC >= 256) {
-          // Memory out of bounds, should loop back over
+          // Memory out of bounds, no bueno
           _CPU.PC -= 256;
         }
-        console.log("PC AFTER " + _CPU.PC);
     }
 }
 
 function increment(PC){
     // Get value and parse as integer
     var value = _memoryManager.readValue(PC);
-
-    console.log("before increment " + value);
     // Increment value 
     value++;
-    // Parse value as hex string and write back to memory
+    // Write incremented value to memory
    _memoryManager.writeValue(PC, value);
-
-    console.log("after increment " + _memoryManager.readValue(PC));
 }
 
 function system(){
+    // Spawn Interrupt
    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ));
-
   }
 }
