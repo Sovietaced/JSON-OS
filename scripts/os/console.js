@@ -111,6 +111,7 @@ function CLIconsole() {
         // Print the 00 terminated string located in memory at location Yreg
         if (_CPU.Xreg == 2){
             // Get value from memory
+            var memLocation = _CPU.Yreg;
             var memory = _memoryManager.readMemory(memLocation);
             var zeroTermString = "";
             // Continue while not 00 terminated
