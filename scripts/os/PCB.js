@@ -37,4 +37,11 @@ function PCB() {
     this.getOffset = function(){
     	return this.offset;
     };
+
+    this.captureState = function(){
+      this.Acc = _CPU.Acc;
+      this.Xreg = _CPU.Xreg;
+      this.Yreg = _CPU.Yreg;
+      this.PC = _CPU.PC;
+    };
 }

@@ -37,6 +37,7 @@ function krnBootstrap()      // Page 8.
 
    //
    _Processes = new Array();            // List where processes are stored
+   _runningProcess = null;              // Currently running
    _memoryManager = new MemoryManager();
    //
 
@@ -95,7 +96,12 @@ function krnOnCPUClockPulse()
         _memoryManager.updateDisplay();
         _CPU.updateDisplay();
     }    
-    else                       // If there are no interrupts and there is nothing being executed then just be idle.
+    else if (_runningProcess != null && !_CPU.isExecuting){
+      // print PCB status
+      _runningProcess = null;
+      console.log("swag");
+    } 
+    else                     // If there are no interrupts and there is nothing being executed then just be idle.
     {
        krnTrace("Idle");
     }
@@ -184,7 +190,17 @@ function krnCreateProcess(program)
 function krnRunProcess(pcb)
 {
   _CPU.PC = pcb.getBase();
+  _runningProcess = pcb.getPid();
   _CPU.isExecuting = true;
+};
+
+function krnFindProcess(pid){
+  for (var i = 0; i < _Processes.length; i++ ){
+        if (_Processes[i].getPid() == parseInt(pid)){
+            return _Processes[i];
+        }
+    }
+    return false;
 };
 
 //

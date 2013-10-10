@@ -331,14 +331,14 @@ function shellRun(args)
     // get value from html text area
     var pid = args[0];
     if (parseInt(pid) >= 0) {
-        for (var i = 0; i < _Processes.length; i++ ){
-            if (_Processes[i].getPid() == parseInt(pid)){
-                _StdIn.putText("Found process with PID " + pid + ". Running...");
-                var result = krnRunProcess(_Processes[i]);
-                return;
-            }
+        var process = krnFindProcess(pid);
+        if (process){
+            var result = krnRunProcess(process);
+            return;
         }
-        _StdIn.putText("Failed to find process with PID " + pid + ".");
+        else{
+            _StdIn.putText("Failed to find process with PID " + pid + ".");
+        }
     } else {
         _StdIn.putText("The PID must be a valid integer");
     }
