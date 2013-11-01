@@ -57,3 +57,7 @@ function listToMatrix(list, elementsPerSubArray) {
 function hexToInt(hexString){
     return parseInt(hexString, 16);
 }
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
