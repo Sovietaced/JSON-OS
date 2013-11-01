@@ -196,6 +196,7 @@ function krnCreateProcess(program)
   }
   else{
     console.log("no");
+    return false;
   }
 };
 

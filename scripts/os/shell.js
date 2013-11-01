@@ -358,7 +358,7 @@ function shellLoad(args)
         console.log(user_input);
 
         var result = krnCreateProcess(user_input);
-        if(!result){
+        if(isNumber(result)){
             _StdIn.putText("Program loaded with PID " + result );
         } else {
             _StdIn.putText("Failed to load program.");

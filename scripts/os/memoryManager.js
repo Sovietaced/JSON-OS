@@ -13,7 +13,10 @@ function MemoryManager() {
 
     // Allocates instructions to bytes in memory
     this.allocate = function(program){
-    	for(var i = 0; i < program.length; i+=2){
+
+      // Find some free memory
+      var memoryBase = this.findFreeMemory();
+    	for(var i = memoryBase; i < program.length; i+=2){
     		// Try to write two hex values to each memory byte,
     		//TODO fix this so that we don't use I, we should use the CPB's bounds
 	    	if(!_RAM.writeMemory(_CPU.PC, program[i] + program[i+1])){
@@ -25,6 +28,16 @@ function MemoryManager() {
 		}
 		return true;
     };
+
+  this.findFreeMemory = function(){
+    var numProcesses = _Processes.length;
+    var freeMemoryLocation = 0; 
+     if (numProcesses > 0){
+        var process = _Processes[numProcesses - 1];
+        freeMemoryLocation = process.getOffset() + 1;
+     }
+     return freeMemoryLocation;
+  };
 
   // Nice help that does base conversions
   this.readValue = function(PC){

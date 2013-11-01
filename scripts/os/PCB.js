@@ -5,27 +5,27 @@
    
    ------------ */
 
-function PCB() {
+   function PCB() {
 
-	var Acc = null;
-	var Xreg = null;
-	var Yreg = null;
-    var Zflat = null;
-    var pid = null;
-    var PC = 0;
-	var base = 0;
-	var offset = 0;              
-    
-    
-    this.init = function(pid, offset){
-		this.Acc = null;
-		this.Xreg = null;
-		this.Yreg = null;
-        this.Zflag = null;
-	    this.pid = pid;
-	    this.PC = 0;
-		this.base = 0;
-		this.offset = offset;  
+     var Acc = null;
+     var Xreg = null;
+     var Yreg = null;
+     var Zflat = null;
+     var pid = null;
+     var PC = 0;
+     var base = 0;
+     var offset = 0;              
+     
+     
+     this.init = function(pid, offset){
+      this.Acc = null;
+      this.Xreg = null;
+      this.Yreg = null;
+      this.Zflag = null;
+      this.pid = pid;
+      this.PC = 0;
+      this.base = 0;
+      this.offset = offset;  
     };
 
     this.getPid = function(){
@@ -56,4 +56,4 @@ function PCB() {
       $('#pcb-Yreg').html(this.Yreg);
       $('#pcb-Zflag').html(this.Zflag);
     };
-}
+  }
