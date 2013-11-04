@@ -54,6 +54,13 @@ function shellInit() {
     sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
 
+    // ps
+    sc = new ShellCommand();
+    sc.command = "ps";
+    sc.description = "- Process status. lists loaded processes";
+    sc.function = shellPs;
+    this.commandList[this.commandList.length] = sc;
+
     // run
     sc = new ShellCommand();
     sc.command = "run";
@@ -340,6 +347,18 @@ function shellTestBSOD(args)
     _StdIn.bsod();
 }
 
+function shellPs()
+{
+    _StdIn.putText("PID");
+    _StdIn.advanceLine();
+
+    var pids = krnGetProcessPids();
+
+    for (var i = 0; i < pids.length; i++ ){
+        _StdIn.putText(pids[i].toString());
+        _StdIn.advanceLine();
+    }
+}
 function shellRun(args)
 {   
     // get value from html text area
