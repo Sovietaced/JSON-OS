@@ -201,6 +201,7 @@ function krnCreateProcess(program)
   }
 };
 
+// Runs a process given the process
 function krnRunProcess(pcb)
 {
   _CPU.PC = pcb.getBase();
@@ -208,7 +209,9 @@ function krnRunProcess(pcb)
   _CPU.isExecuting = true;
 };
 
-function krnFindProcess(pid){
+// Returns a process given a process ID
+function krnFindProcess(pid)
+{
   for (var i = 0; i < _Processes.length; i++ ){
         if (_Processes[i].getPid() == parseInt(pid)){
             return _Processes[i];
@@ -217,7 +220,18 @@ function krnFindProcess(pid){
     return false;
 };
 
-function krnSetQuantum(quantum){
+// Returns a list of the loaded process IDs
+function krnGetProcessPids()
+{
+  var pids = [];
+  for (var i = 0; i < _Processes.length; i++ ){
+      pids.push(_Processes[i].getPid());
+  }
+  return pids;
+};
+
+function krnSetQuantum(quantum)
+{
   _quantum = quantum;
 };
 

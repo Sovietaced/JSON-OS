@@ -54,11 +54,18 @@ function shellInit() {
     sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
 
-    // testbsod
+    // run
     sc = new ShellCommand();
     sc.command = "run";
     sc.description = "- Runs a program in memory specified by it's PID";
     sc.function = shellRun;
+    this.commandList[this.commandList.length] = sc;
+
+     // runall
+    sc = new ShellCommand();
+    sc.command = "runall";
+    sc.description = "- Runs all loaded programs";
+    sc.function = shellRunAll;
     this.commandList[this.commandList.length] = sc;
 
     // date
@@ -340,6 +347,7 @@ function shellRun(args)
     if (parseInt(pid) >= 0) {
         var process = krnFindProcess(pid);
         if (process){
+             _StdIn.putText("Running process with PID " + pid + "...");
             var result = krnRunProcess(process);
             return;
         }
@@ -348,6 +356,30 @@ function shellRun(args)
         }
     } else {
         _StdIn.putText("The PID must be a valid integer");
+    }
+}
+
+function shellRunAll(args)
+{   
+
+     _StdIn.putText("Running all loaded processes...");
+     _StdIn.advanceLine();
+
+    var pids = krnGetProcessPids();
+    
+    if (pids.length > 0) {
+        for (var i = 0; i < pids.length; i++ ){
+            if (process){
+                krnRunProcess(process);
+                console.log("yay");
+            }
+            else{
+                _StdIn.putText("Failed to find process with PID " + pids[i] + ".");
+            }
+        }
+    }
+    else{
+        _StdIn.putText("No processes loaded.");
     }
 }
 
