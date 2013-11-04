@@ -377,7 +377,7 @@ function shellRunAll(args)
                 _StdIn.putText("Failed to find process with PID " + pids[i] + ".");
             }
         }
-    }
+    }    
     else{
         _StdIn.putText("No processes loaded.");
     }
