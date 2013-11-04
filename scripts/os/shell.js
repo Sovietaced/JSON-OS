@@ -362,8 +362,8 @@ function shellRun(args)
 function shellRunAll(args)
 {   
 
-     _StdIn.putText("Running all loaded processes...");
-     _StdIn.advanceLine();
+    _StdIn.putText("Running all loaded processes...");
+    _StdIn.advanceLine();
 
     var pids = krnGetProcessPids();
     
@@ -371,7 +371,6 @@ function shellRunAll(args)
         for (var i = 0; i < pids.length; i++ ){
             if (process){
                 krnRunProcess(process);
-                console.log("yay");
             }
             else{
                 _StdIn.putText("Failed to find process with PID " + pids[i] + ".");
@@ -393,8 +392,6 @@ function shellLoad(args)
     user_input = user_input.replace(/(\r\n|\n|\r)/gm,"");
 
     if (user_input.match(/^[0-9A-F]/i)) {
-
-        console.log(user_input);
 
         var result = krnCreateProcess(user_input);
         if(isNumber(result)){

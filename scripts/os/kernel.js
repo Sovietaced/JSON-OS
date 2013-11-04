@@ -38,7 +38,7 @@ function krnBootstrap()      // Page 8.
    //
    _Processes = new Array();            // List where processes are stored
    _runningProcess = null; 
-   _quantum = 1;                        // Round robin quantum value (clock ticks)
+   _quantum = 6;                        // Round robin quantum value (clock ticks)
    _memoryManager = new MemoryManager();
    //
 
