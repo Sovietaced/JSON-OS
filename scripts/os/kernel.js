@@ -37,7 +37,8 @@ function krnBootstrap()      // Page 8.
 
    //
    _Processes = new Array();            // List where processes are stored
-   _runningProcess = null;              // Currently running
+   _runningProcess = null; 
+   _quantum = 1;                        // Round robin quantum value (clock ticks)
    _memoryManager = new MemoryManager();
    //
 
@@ -214,6 +215,10 @@ function krnFindProcess(pid){
         }
     }
     return false;
+};
+
+function krnSetQuantum(quantum){
+  _quantum = quantum;
 };
 
 //

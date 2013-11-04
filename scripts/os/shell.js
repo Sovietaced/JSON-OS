@@ -54,7 +54,7 @@ function shellInit() {
     sc.function = shellLoad;
     this.commandList[this.commandList.length] = sc;
 
-         // testbsod
+    // testbsod
     sc = new ShellCommand();
     sc.command = "run";
     sc.description = "- Runs a program in memory specified by it's PID";
@@ -122,6 +122,13 @@ function shellInit() {
     sc.command = "rot13";
     sc.description = "<string> - Does rot13 obfuscation on <string>.";
     sc.function = shellRot13;
+    this.commandList[this.commandList.length] = sc;
+
+    // quantum <int> 
+    sc = new ShellCommand();
+    sc.command = "quantum";
+    sc.description = "<int> - Sets the quantum value (clock ticks).";
+    sc.function = shellQuantum;
     this.commandList[this.commandList.length] = sc;
 
     // prompt <string>
@@ -489,6 +496,22 @@ function shellRot13(args)
     if (args.length > 0)
     {
         _StdIn.putText(args[0] + " = '" + rot13(args[0]) +"'");     // Requires Utils.js for rot13() function.
+    }
+    else
+    {
+        _StdIn.putText("Usage: rot13 <string>  Please supply a string.");
+    }
+}
+
+function shellQuantum(args)
+{
+    if (args.length > 0)
+    {
+        var quantum = parseInt(args[0]);
+        if(isNumber(quantum)){
+            krnSetQuantum(quantum);
+            _StdIn.putText("Quantum value set to " + quantum + ".");
+        } 
     }
     else
     {
