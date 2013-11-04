@@ -39,6 +39,12 @@ function MemoryManager() {
      return freeMemoryLocation;
   };
 
+  this.clearMemory = function(base, offset){
+    for (var i = base; i <= offset; i++){
+      _RAM.writeMemory(i, "00");
+    }
+  }
+
   // Nice help that does base conversions
   this.readValue = function(PC){
     return parseInt(_RAM.readMemory(parseInt(PC, 16)), 16);

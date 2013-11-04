@@ -47,6 +47,13 @@ function shellInit() {
     sc.function = shellTestBSOD;
     this.commandList[this.commandList.length] = sc;
 
+    // kill
+    sc = new ShellCommand();
+    sc.command = "kill";
+    sc.description = "<int> - Kills a process by specified pid";
+    sc.function = shellKill;
+    this.commandList[this.commandList.length] = sc;
+
     // load
     sc = new ShellCommand();
     sc.command = "load";
@@ -310,6 +317,13 @@ function shellInvalidCommand()
     }
 }
 
+function shellKill(args)
+{
+
+    krnKillProcess(args[0]);
+
+}
+
 function shellCurse()
 {
     _StdIn.putText("Oh, so that's how it's going to be, eh? Fine.");
@@ -359,6 +373,7 @@ function shellPs()
         _StdIn.advanceLine();
     }
 }
+
 function shellRun(args)
 {   
     // get value from html text area

@@ -201,6 +201,23 @@ function krnCreateProcess(program)
   }
 };
 
+function krnKillProcess(pid)
+{
+  var process = krnFindProcess(pid);
+
+  if (process){
+    // Zero out memory
+    _memoryManager.clearMemory(process.getBase(), process.getOffset());
+
+     for (var i = 0; i < _Processes.length; i++ ){
+        if (_Processes[i].getPid() == parseInt(pid)){
+            // Remove process from process list
+            _Processes.splice(i,1);
+        }
+    }
+  }
+};
+
 // Runs a process given the process
 function krnRunProcess(pcb)
 {
