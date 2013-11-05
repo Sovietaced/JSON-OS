@@ -319,8 +319,20 @@ function shellInvalidCommand()
 
 function shellKill(args)
 {
-
-    krnKillProcess(args[0]);
+    // get value from html text area
+    var pid = args[0];
+    if (parseInt(pid) >= 0) {
+        var process = krnFindProcess(pid);
+        if (process){
+            krnKillProcess(pid);
+            _StdIn.putText("Process with PID " + pid + " killed.");
+        }
+        else{
+            _StdIn.putText("Failed to find process with PID " + pid + ".");
+        }
+    } else {
+        _StdIn.putText("The PID must be a valid integer");
+    }
 
 }
 
