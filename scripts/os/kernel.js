@@ -40,6 +40,7 @@ function krnBootstrap()      // Page 8.
    _runningProcess = null; 
    _quantum = 6;                        // Round robin quantum value (clock ticks)
    _memoryManager = new MemoryManager();
+   _ReadyQueue = new Queue();           // Process ready queue
    //
 
    // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
