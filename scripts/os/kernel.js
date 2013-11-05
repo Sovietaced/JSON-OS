@@ -35,7 +35,7 @@ function krnBootstrap()      // Page 8.
    krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
    krnTrace(krnKeyboardDriver.status);
 
-   //
+   // 
    _Processes = new Array();            // List where processes are stored
    _runningProcess = null; 
    _quantum = 6;                        // Round robin quantum value (clock ticks)
@@ -106,9 +106,6 @@ function krnOnCPUClockPulse()
       if(process){
         process.captureState();
         process.updateDisplay();
-        _StdIn.advanceLine();
-        // Print the prompt
-        _OsShell.putPrompt();
       }
       _runningProcess = null;
     } 
