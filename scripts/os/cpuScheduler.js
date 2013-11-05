@@ -19,6 +19,13 @@ function CpuScheduler() {
 
     this.schedule = function(pcb){
       this.readyQueue.enqueue(pcb);
+
+      // Start the CPU if it is not already started
+      if(this.readyQueue.getSize() === 1){
+        console.log("turnin the cpu on");
+        _CPU.isExecuting = true;
+      }
+
       console.log("Process " + pcb.getPid() + " scheduled.");
     };
 
@@ -26,29 +33,36 @@ function CpuScheduler() {
 
       // Handle finished program
       if (!_CPU.isExecuting){
+        console.log("we here now");
         this.readyQueue.dequeue();
       }
       
-      if (this.readyQueue.length > 0){
-        // Make sure we're executing
-        _CPU.isExecuting = true;
+      if (this.readyQueue.getSize() > 0){
 
-        if(++this.clock % this.quantum === 0){
-          this.rotate();
-        }
+          // Make sure we're executing
+          _CPU.isExecuting = true;
 
-        // Get the head
-        var pcb = this.readyQueue[0];
-        // Let the kernel know what process we're currently running
-        if(_runningProcess != pcb){
-          _runningProcess = pcb;
-          this.loadPCB(pcb);
+          // Only rotate if we have more than 1 process running
+          if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
+            this.rotate();
+          }
+
+          // Get the head
+          var pcb = this.readyQueue.peek();
+          // Let the kernel know what process we're currently running
+          if(_runningProcess != pcb){
+            _runningProcess = pcb;
+            this.loadPCB(pcb);
+          }
+          // Process hasn't changed so carry on
+          else{
+
+          }
         }
-        // Process hasn't changed so carry on
         else{
-
+         _runningProcess = null;
+          console.log("WE STOPPING!");
         }
-      }
 
 
     };
