@@ -48,6 +48,14 @@
       this.PC = _CPU.PC;
     };
 
+     this.loadState = function(){
+      _CPU.Acc = this.Acc;
+      _CPU.Xreg = this.Xreg;
+      _CPU.Yreg = this.Yreg;
+      _CPU.Zflag = this.Zflag;
+      _CPU.PC = this.PC;
+    };
+
     this.updateDisplay = function(){
       $('#pcb-PID').html(this.pid);
       $('#pcb-PC').html(this.PC);

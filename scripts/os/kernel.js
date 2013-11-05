@@ -103,14 +103,7 @@ function krnOnCPUClockPulse()
     }    
     else if (_runningProcess != null && !_CPU.isExecuting){
 
-      // Find the process
-      var process = krnFindProcess(_runningProcess);
-      // We know that it is finished executing, so capture the state and print the details
-      if(process){
-        process.captureState();
-        process.updateDisplay();
-      }
-      _runningProcess = null;
+      _CpuScheduler.run();
     } 
     else                     // If there are no interrupts and there is nothing being executed then just be idle.
     {
@@ -186,16 +179,20 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 
 function krnCreateProcess(program)
 {
-  
     // Attempt to allocate memory for program
     var base = _memoryManager.allocate(program);
-    
+    var memorySize = program.length/2; // 1 byte is two letters
+
     if (base >= 0){
-      process = new PCB();
-      var memorySize = program.length/2;                  // 1 byte is two letters
+
+      // PCB creation
+      process = new PCB();    
       process.init(getNextPID(), base, memorySize); // Create process by passing in ID
+      
+      // Scheduling and process list
       _Processes.push(process);
       _CpuScheduler.schedule(process);
+
       return process.getPid();
     }
     else{

@@ -13,7 +13,7 @@
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
 
-function Cpu() {
+   function Cpu() {
     this.PC    = 0;     // Program Counter
     this.Acc   = 0;     // Accumulator
     this.Xreg  = 0;     // X register
@@ -22,23 +22,23 @@ function Cpu() {
     this.isExecuting = false;
     
     this.init = function() {
-        this.PC    = 0;
-        this.Acc   = 0;
-        this.Xreg  = 0;
-        this.Yreg  = 0;
-        this.Zflag = 0;      
-        this.isExecuting = false;  
+      this.PC    = 0;
+      this.Acc   = 0;
+      this.Xreg  = 0;
+      this.Yreg  = 0;
+      this.Zflag = 0;      
+      this.isExecuting = false;  
     };
     
     this.cycle = function() {
-        krnTrace("CPU cycle");
+      krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
         if(this.execute(this.fetch()) == false){
           this.isExecuting = false;
         }
-    };
+      };
 
-    this.execute = function(instruction){
+      this.execute = function(instruction){
       var instructionData = null; // The hash from OP_CODES
       var arguments = null;
 
@@ -54,8 +54,8 @@ function Cpu() {
       }
       else{
        return false;
-      }
-    };
+     }
+   };
 
     // Fetches the instruction at the PC
     this.fetch = function(){
@@ -88,100 +88,96 @@ function Cpu() {
 
 // Pretty self explanatory
 var OP_CODES = {
-    'A9': { argsLen: 1, funct: loadAccWithConstant },
-    'AD': { argsLen: 2, funct: loadAccFromMemory },
-    '8D': { argsLen: 2, funct: storeAccInMemory },
-    '6D': { argsLen: 2, funct: addWithCarry },
-    'A2': { argsLen: 1, funct: loadXregWithConstant },
-    'AE': { argsLen: 2, funct: loadXregFromMemory },
-    'A0': { argsLen: 1, funct: loadYregWithConstant },
-    'AC': { argsLen: 2, funct: loadYregFromMemory },
-    'EA': { argsLen: 0, funct: noOp },
-    '00': { argsLen: 0, funct: brk },
-    'EC': { argsLen: 2, funct: compare },
-    'D0': { argsLen: 1, funct: branch },
-    'EE': { argsLen: 2, funct: increment },
-    'FF': { argsLen: 0, funct: system }
+  'A9': { argsLen: 1, funct: loadAccWithConstant },
+  'AD': { argsLen: 2, funct: loadAccFromMemory },
+  '8D': { argsLen: 2, funct: storeAccInMemory },
+  '6D': { argsLen: 2, funct: addWithCarry },
+  'A2': { argsLen: 1, funct: loadXregWithConstant },
+  'AE': { argsLen: 2, funct: loadXregFromMemory },
+  'A0': { argsLen: 1, funct: loadYregWithConstant },
+  'AC': { argsLen: 2, funct: loadYregFromMemory },
+  'EA': { argsLen: 0, funct: noOp },
+  '00': { argsLen: 0, funct: brk },
+  'EC': { argsLen: 2, funct: compare },
+  'D0': { argsLen: 1, funct: branch },
+  'EE': { argsLen: 2, funct: increment },
+  'FF': { argsLen: 0, funct: system }
 };
 
 function loadAccWithConstant(constant){
-    _CPU.Acc = hexToInt(constant);
+  _CPU.Acc = hexToInt(constant);
 }
 
 function loadAccFromMemory(PC){
-    _CPU.Acc = _memoryManager.readValue(PC);
+  _CPU.Acc = _memoryManager.readValue(PC);
 }
 
 function storeAccInMemory(PC){
-    _memoryManager.writeValue(PC, _CPU.Acc);
+  _memoryManager.writeValue(PC, _CPU.Acc);
 }
 
 function addWithCarry(PC){
-    _CPU.Acc += _memoryManager.readValue(PC);
+  _CPU.Acc += _memoryManager.readValue(PC);
 }
 
 function loadXregWithConstant(constant){
-    _CPU.Xreg = hexToInt(constant);
+  _CPU.Xreg = hexToInt(constant);
 }
 
 function loadXregFromMemory(PC){
-    _CPU.Xreg = _memoryManager.readValue(PC);
+  _CPU.Xreg = _memoryManager.readValue(PC);
 }
 
 function loadYregWithConstant(constant){
-    _CPU.Yreg = hexToInt(constant);
+  _CPU.Yreg = hexToInt(constant);
 }
 
 function loadYregFromMemory(PC){
-    _CPU.Yreg = _memoryManager.readValue(PC);
+  _CPU.Yreg = _memoryManager.readValue(PC);
 }
 
 function noOp(){
     // NO operation
-}
+  }
 
-function brk(){
-   // Find the running program
-   var process = krnFindProcess(_runningProcess);
-   // If found stop it.
-   if (process){
-    process.captureState();
+  function brk(){
+    console.log("break");
+    // Stop executing
     _CPU.isExecuting = false;
-   }
-}
+  }
 
-function compare(PC){
+  function compare(PC){
     var value = _memoryManager.readValue(PC);
     if (value == _CPU.Xreg){
-        _CPU.Zflag = 1;
+      _CPU.Zflag = 1;
     }
     else{
-       _CPU.Zflag = 0;
-    }
-}
+     _CPU.Zflag = 0;
+   }
+ }
 
-function branch(position){
-    if( _CPU.Zflag == 0){
+ function branch(position){
+  if( _CPU.Zflag == 0){
       // Increment PC number of positions
-        _CPU.PC += hexToInt(position);
-        if (_CPU.PC >= 256) {
+      _CPU.PC += hexToInt(position);
+      if (_CPU.PC >= 256) {
           // Memory out of bounds, no bueno
           _CPU.PC -= 256;
         }
+      }
     }
-}
 
-function increment(PC){
+    function increment(PC){
     // Get value and parse as integer
     var value = _memoryManager.readValue(PC);
     // Increment value 
     value++;
     // Write incremented value to memory
-   _memoryManager.writeValue(PC, value);
-}
+    _memoryManager.writeValue(PC, value);
+  }
 
-function system(){
+  function system(){
     // Spawn Interrupt
-   _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ));
+    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ));
   }
 }
