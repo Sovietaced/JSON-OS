@@ -22,8 +22,13 @@ function Ram() {
     };
 
     this.writeMemory = function(PC,value) {
-        this.memory[PC] = value;
-        return true;
+        if(PC < RAM_SIZE){
+          this.memory[PC] = value;
+          return true;
+        }
+        else{
+          return false;
+        }
     };
 
     this.readMemory = function(PC) {

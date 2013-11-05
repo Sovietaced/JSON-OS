@@ -14,35 +14,47 @@ function MemoryManager() {
     // Allocates instructions to bytes in memory
     this.allocate = function(program){
 
-      // Find some free memory
-      var memoryBase = this.findFreeMemory();
-    	for(var i = memoryBase; i < program.length; i+=2){
+      var memoryBase = this.findFreeMemory(); // Used to return
+      var memoryPosition = memoryBase; // Used to iterate
+
+    	for(var i = 0; i < program.length; i+=2){
     		// Try to write two hex values to each memory byte,
-    		//TODO fix this so that we don't use I, we should use the CPB's bounds
-	    	if(!_RAM.writeMemory(_CPU.PC, program[i] + program[i+1])){
-	    		return false;
+	    	if(!_RAM.writeMemory(memoryPosition, program[i] + program[i+1])){
+          //TODO: Should probably throw an exception here
+	    		return memoryBase;
 	    	}
 	    	else{
-	    		_CPU.PC++;
+          // Memory write successful, increment the memory position (PC)
+          this.updateDisplay();
+          memoryPosition++;
 	    	}
-		}
-		return true;
+		  }
+      return memoryBase;
     };
 
+  // Finds free memory for a new process
   this.findFreeMemory = function(){
+
     var numProcesses = _Processes.length;
-    var freeMemoryLocation = 0; 
+    var freeMemoryLocation = 0; // Default to 0
+
      if (numProcesses > 0){
         var process = _Processes[numProcesses - 1];
-        freeMemoryLocation = process.getOffset() + 1;
+        // Next memory location is right after the last known process at this time
+        // Not that advanced but it should work for now
+        freeMemoryLocation = process.getBase() + process.getOffset();
      }
      return freeMemoryLocation;
   };
 
+  // Self explanatory
   this.clearMemory = function(base, offset){
-    for (var i = base; i <= offset; i++){
+
+    for (var i = base; i < base + offset; i++){
       _RAM.writeMemory(i, "00");
     }
+
+    this.updateDisplay();
   }
 
   // Nice help that does base conversions

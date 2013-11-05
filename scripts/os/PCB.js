@@ -17,14 +17,14 @@
      var offset = 0;              
      
      
-     this.init = function(pid, offset){
+     this.init = function(pid, base, offset){
       this.Acc = null;
       this.Xreg = null;
       this.Yreg = null;
       this.Zflag = null;
       this.pid = pid;
       this.PC = 0;
-      this.base = 0;
+      this.base = base;
       this.offset = offset;  
     };
 

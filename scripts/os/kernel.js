@@ -36,11 +36,13 @@ function krnBootstrap()      // Page 8.
    krnTrace(krnKeyboardDriver.status);
 
    // 
-   _Processes = new Array();            // List where processes are stored
-   _runningProcess = null; 
-   _quantum = 6;                        // Round robin quantum value (clock ticks)
-   _memoryManager = new MemoryManager();
-   _ReadyQueue = new Queue();           // Process ready queue
+   _Processes = new Array();            // List of oaded processes
+   _runningProcess = null;                       // Round robin quantum value (clock ticks)
+   _memoryManager = new MemoryManager(); 
+   _memoryManager.init();
+   _CpuScheduler = new CpuScheduler();
+   _CpuScheduler.init();
+   _nextPID = 0;
    //
 
    // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
@@ -93,7 +95,8 @@ function krnOnCPUClockPulse()
         krnInterruptHandler(interrupt.irq, interrupt.params);
     }
     else if (_CPU.isExecuting) // If there are no interrupts then run one CPU cycle if there is anything being processed.
-    {
+    {   
+        _CpuScheduler.run();
         _CPU.cycle();
         _memoryManager.updateDisplay();
         _CPU.updateDisplay();
@@ -184,19 +187,20 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 function krnCreateProcess(program)
 {
   
-  // Attempt to allocate memory for program
-  if(_memoryManager.allocate(program)){
-    process = new PCB();
-    process.init(_Processes.length, program.length); // Create process by passing in ID
-    _Processes.push(process);
-
-    // Create process control block
-    return process.getPid();
-  }
-  else{
-    console.log("no");
-    return false;
-  }
+    // Attempt to allocate memory for program
+    var base = _memoryManager.allocate(program);
+    
+    if (base >= 0){
+      process = new PCB();
+      var memorySize = program.length/2;                  // 1 byte is two letters
+      process.init(getNextPID(), base, memorySize); // Create process by passing in ID
+      _Processes.push(process);
+      _CpuScheduler.schedule(process);
+      return process.getPid();
+    }
+    else{
+      return false;
+    }
 };
 
 function krnKillProcess(pid)
@@ -219,6 +223,7 @@ function krnKillProcess(pid)
 // Runs a process given the process
 function krnRunProcess(pcb)
 {
+  _CpuScheduler.schedule(pcb);
   _CPU.PC = pcb.getBase();
   _runningProcess = pcb.getPid();
   _CPU.isExecuting = true;
@@ -248,6 +253,10 @@ function krnGetProcessPids()
 function krnSetQuantum(quantum)
 {
   _quantum = quantum;
+};
+
+function getNextPID(){
+  return _nextPID++;
 };
 
 //
