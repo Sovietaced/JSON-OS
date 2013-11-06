@@ -59,19 +59,49 @@ function MemoryManager() {
 
   // Nice help that does base conversions
   this.readValue = function(PC){
-    return parseInt(_RAM.readMemory(parseInt(PC, 16)), 16);
+      PC = parseInt(PC, 16);
+
+      if (this.validate(PC)){
+        return parseInt(_RAM.readMemory(PC, 16));
+      }
+
   };
 
-   // Nice help that does base conversions
+   // Reads direct value
   this.readMemory = function(PC){
-    return _RAM.readMemory(PC);
+    if (this.validate(PC)){
+      return _RAM.readMemory(PC);
+    }
   };
 
   // Nice help that does base conversions
   this.writeValue = function(PC, value){
-    _RAM.writeMemory(parseInt(PC, 16), value.toString(16));
+    PC = parseInt(PC, 16);
+
+    if (this.validate(PC)){
+      _RAM.writeMemory(PC, value.toString(16));
+    }
   };
   
+  // Validates memory requests for errors
+  this.validate = function(PC){
+
+    // Get PCB limits
+    var low = _runningProcess.getBase();
+    var high = low + _runningProcess.getOffset();
+
+    if(PC >= low && PC < high){
+      return true;
+    }
+    else {
+
+    console.log("low " + low);
+    console.log("high " + high);
+    console.log("PC " + PC);
+      krnTrapError("Memory Acces Out Of Bounds");
+    }
+  };
+
   // Updates external display
   this.updateDisplay = function(){
 
