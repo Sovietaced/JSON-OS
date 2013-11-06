@@ -90,11 +90,11 @@ function MemoryManager() {
     var low = _runningProcess.getBase();
     var high = low + _runningProcess.getOffset();
 
-    if(PC >= low && PC < high){
+    if(PC + low >= low && PC < high){
       return true;
     }
     else {
-
+    console.log(_runningProcess.PC);
     console.log("low " + low);
     console.log("high " + high);
     console.log("PC " + PC);

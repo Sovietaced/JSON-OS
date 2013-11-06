@@ -13,6 +13,8 @@
    Operating System Concepts 8th edition by Silberschatz, Galvin, and Gagne.  ISBN 978-0-470-12872-5
    ------------ */
 
+   var PROCESS_SIZE = 256;
+
    function Cpu() {
     this.PC    = 0;     // Program Counter
     this.Acc   = 0;     // Accumulator
@@ -160,9 +162,9 @@ function noOp(){
   if( _CPU.Zflag == 0){
       // Increment PC number of positions
       _CPU.PC += hexToInt(position);
-      if (_CPU.PC >= 256) {
+      if (_CPU.PC >= PROCESS_SIZE) {
           // Memory out of bounds, no bueno
-          _CPU.PC -= 256;
+          _CPU.PC -= PROCESS_SIZE;
         }
       }
     }
