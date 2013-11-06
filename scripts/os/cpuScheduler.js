@@ -42,7 +42,7 @@ function CpuScheduler() {
           // Make sure we're executing
           _CPU.isExecuting = true;
 
-          // Only rotate if we have more than 1 process running
+          // Switch processes if we've reached the quantum value, increment clock ticks counter
           if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
             this.rotate();
           }
@@ -84,6 +84,10 @@ function CpuScheduler() {
     this.loadPCB = function(pcb){
       // This loads PCB state into CPU
       pcb.loadState();
+    };
+
+    this.setQuantum = function(quantum){
+      this.quantum = quantum;
     };
 
     this.updateDisplay = function(){
