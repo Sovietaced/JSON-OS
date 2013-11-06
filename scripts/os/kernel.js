@@ -166,7 +166,11 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
     // Check multiprogramming parameters and enforce quanta here. Call the scheduler / context switch here if necessary.
 }   
 
-
+function krnSwitch()
+{
+  // Moves to the next process in round robin
+  _CpuScheduler.rotate();
+}
 
 //
 // System Calls... that generate software interrupts via tha Application Programming Interface library routines.

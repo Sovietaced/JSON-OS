@@ -45,7 +45,7 @@ function CpuScheduler() {
 
           // Switch processes if we've reached the quantum value, increment clock ticks counter
           if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
-            this.rotate();
+            _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch")));
           }
 
           // Get the head
