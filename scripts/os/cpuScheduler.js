@@ -48,6 +48,10 @@ function CpuScheduler() {
           if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
             _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
           }
+          else{
+            // Capture state for live updates for every clock tick
+            this.readyQueue.peek().captureState();
+          }
         }
         else{
           krnTrace("Scheduler has nothing to schedule. Stopping Execution");
@@ -91,6 +95,28 @@ function CpuScheduler() {
     };
 
     this.updateDisplay = function(){
+
+
+      var pcbData = [];
+      for(var i = 0; i < this.readyQueue.getSize(); i++){
+        pcbData.push(this.readyQueue.q[i].toArray());
+      }
+
+       // Remove table body rows
+      $("#readyQueue").empty(); 
+
+      // Rende heading row
+      data = "<td>PID</td><td>PC</td><td>Acc</td><td>XReg</td><td>YReg</td><td>ZFlag</td>"
+      $('#readyQueue').append('<tr>' + data + '</tr>');
+
+      // Render HTML and push it
+      for (var row in pcbData) {
+        var data = "";
+         for (var value in pcbData[row]){
+            data += "<td> " + pcbData[row][value] + "</td>";
+         }
+         $('#readyQueue').append('<tr>' + data + '</tr>');
+      }
 
     };
 

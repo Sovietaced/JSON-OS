@@ -99,6 +99,7 @@ function krnOnCPUClockPulse()
         _CpuScheduler.run();
         _CPU.cycle();
 
+        _CpuScheduler.updateDisplay();
         _memoryManager.updateDisplay();
         _CPU.updateDisplay();
     }     

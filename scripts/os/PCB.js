@@ -16,7 +16,6 @@
      var base = 0;
      var offset = 0;              
      
-     
      this.init = function(pid, base, offset){
       this.Acc = null;
       this.Xreg = null;
@@ -67,5 +66,9 @@
       $('#pcb-Xreg').html(this.Xreg);
       $('#pcb-Yreg').html(this.Yreg);
       $('#pcb-Zflag').html(this.Zflag);
+    };
+
+    this.toArray = function(){
+      return new Array(this.pid, this.PC, this.Acc, this.Xreg, this.Yreg, this.Zflag);
     };
   }
