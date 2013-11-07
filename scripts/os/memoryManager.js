@@ -65,31 +65,37 @@ function MemoryManager() {
       PC = this.validate(PC);
 
       if (PC !== false){
-        return parseInt(_RAM.readMemory(PC, 16));
+        console.log("PC " + PC);
+        console.log("Instruction " + _RAM.readMemory(PC));
+        return parseInt(_RAM.readMemory(PC), 16);
       }
 
   };
 
    // Reads direct value
   this.readMemory = function(PC){
-    console.log("PC PRE VAL " + PC);
+
     PC = this.validate(PC);
  
     if (PC !== false){
       console.log("PC " + PC);
-      console.log(_RAM.readMemory(PC));
+      console.log("Instruction " + _RAM.readMemory(PC));
       return _RAM.readMemory(PC);
     }
   };
 
   // Nice help that does base conversions
   this.writeValue = function(PC, value){
-
+    console.log("writin");
     PC = parseInt(PC, 16);
-    PC = this.validate(PC);
+
+    var base = _CpuScheduler.getRunningProcess().getBase();
+
+    PC = this.validate(PC + base);
 
     if (PC !== false){
-      _RAM.writeMemory(PC, value.toString(16));
+        console.log("PC " + PC + base);
+      _RAM.writeMemory(PC + base, value.toString(16));
     }
   };
 
@@ -107,6 +113,7 @@ function MemoryManager() {
       return PC;
     }
     else {
+    console.log("FAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIL");
     console.log(_CpuScheduler.getRunningProcess().PC);
     console.log("low " + low);
     console.log("high " + high);

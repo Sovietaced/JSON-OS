@@ -44,7 +44,7 @@ function CpuScheduler() {
     };
 
     this.run = function(){
-
+      console.log("clock " + this.clock);
         if (this.readyQueue.getSize() > 0){
           // Switch processes if we've reached the quantum value, increment clock ticks counter
           if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
