@@ -196,15 +196,17 @@ function krnSwitch()
 function krnCreateProcess(program)
 {
     // Attempt to allocate memory for program
-    var base = _memoryManager.allocate(program);
-    var memorySize = program.length/2; // 1 byte is two letters
+    var partition = _memoryManager.allocate(program);
 
-    if (base >= 0){
+    if (partition){
 
       // PCB creation
       process = new PCB();    
-      process.init(getNextPID(), base, memorySize); // Create process by passing in ID
+      process.init(getNextPID(), partition.low, partition.high); // Create process by passing in ID
       
+      // Set the partition to active
+      partition.pid = process.getPid();
+
       // Add process to process list
       _Processes.push(process);
 

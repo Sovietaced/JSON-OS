@@ -7,23 +7,32 @@
 
 function MemoryManager() {
 
+    this.partitions = {};
+
     this.init = function(){
 
-      this.partitions = new Array(PARTITIONS);
+      var partitionSize = RAM_SIZE/PARTITIONS;
+      for(var i = 0; i < PARTITIONS; i++){
+        // Create hashes for each partition that hold some basic info
+        this.partitions[i] = {pid: null, 
+                              low: partitionSize * i,
+                              high: partitionSize * (i+1)};
+      }
         
     };
 
     // Allocates instructions to bytes in memory
     this.allocate = function(program){
 
-      var memoryBase = this.findFreePartition(); // Used to return
-      var memoryPosition = memoryBase; // Used to iterate
+      var partition = this.findFreePartition(); // Used to return
+      console.log(partition);
+      var memoryPosition = partition.low; // Used to iterate
 
     	for(var i = 0; i < program.length; i+=2){
     		// Try to write two hex values to each memory byte,
 	    	if(!_RAM.writeMemory(memoryPosition, program[i] + program[i+1])){
           //TODO: Should probably throw an exception here
-	    		return memoryBase;
+	    	
 	    	}
 	    	else{
           // Memory write successful, increment the memory position (PC)
@@ -31,23 +40,19 @@ function MemoryManager() {
           memoryPosition++;
 	    	}
 		  }
-      return memoryBase;
+      return partition;
     };
 
-  // Finds free memory for a new process
-  this.findFreeMemory = function(){
+  // Finds a free partition for a new process
+  this.findFreePartition = function(){
 
-    var numProcesses = _Processes.length;
-    var freeMemoryLocation = 0; // Default to 0
-
-     if (numProcesses > 0){
-        var process = _Processes[numProcesses - 1];
-        // Next memory location is right after the last known process at this time
-        // Not that advanced but it should work for now
-        freeMemoryLocation = process.getBase() + process.getOffset();
-     }
-     console.log("free mem " + freeMemoryLocation);
-     return freeMemoryLocation;
+    // Loop through the partitions and find one without a PID assigned
+    for (i in this.partitions){
+      if(this.partitions[i].pid === null){
+        return this.partitions[i];
+      }
+    }
+    
   };
 
   // Self explanatory
