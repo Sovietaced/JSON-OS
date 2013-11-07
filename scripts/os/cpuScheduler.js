@@ -10,11 +10,13 @@ function CpuScheduler() {
   this.quantum = 6;     // Quantum value in clock ticks
   this.clock = 0;
   this.readyQueue = new Queue();
+  this.mode = null;
 
     this.init = function(){
       this.quantum = 6;     // Quantum value in clock ticks
       this.clock = 0;       // Clock ticks to evaluate when switching is necessary
       this.readyQueue = new Queue();
+      this.mode = 1;        // user mode
     };
 
     // Returns the head of the PCB
@@ -56,6 +58,8 @@ function CpuScheduler() {
         else{
           krnTrace("Scheduler has nothing to schedule. Stopping Execution");
           // We have nothing left to process
+          // Back to kernel mode
+          this.mode = 0;
          _CPU.isExecuting = false;
         }
     };
