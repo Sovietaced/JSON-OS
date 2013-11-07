@@ -145,7 +145,7 @@ function noOp(){
   function brk(){
     console.log("break");
     // Spawn Interrupt
-    _KernelInterruptQueue.enqueue(new Interrupt(SYS_BREAK_IRQ));
+    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ, new Array("break")));
   }
 
   function compare(PC){
@@ -180,6 +180,6 @@ function noOp(){
 
   function system(){
     // Spawn Interrupt
-    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ));
+    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ, new Array("print")));
   }
 }

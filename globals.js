@@ -30,8 +30,7 @@ var _CPU = null;
 var _RAM = null;
 var _memoryManager = null;
 
-var _Processes = null;            // List where processes are stored
-var _runningProcess = null;     
+var _Processes = null;            // List where processes are stored  
 
 var _OSclock = 0;       // Page 23.
 

@@ -36,13 +36,12 @@ function krnBootstrap()      // Page 8.
    krnTrace(krnKeyboardDriver.status);
 
    // 
-   _Processes = new Array();            // List of oaded processes
-   _runningProcess = null;                       // Round robin quantum value (clock ticks)
+   _Processes = new Array();            // Resident List
    _memoryManager = new MemoryManager(); 
    _memoryManager.init();
    _CpuScheduler = new CpuScheduler();
    _CpuScheduler.init();
-   _nextPID = 0;
+   _nextPID = 0;                        // Counter for delegating PIDs
    //
 
    // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
@@ -162,7 +161,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
               _StdIn.handleSystemCall();
               break;
             case "break":
-              krnKillProcess(_runningProcess.getPid());
+              krnKillProcess();
               break;
           }
             break;
@@ -180,8 +179,6 @@ function krnSwitch()
 { 
   // Moves to the next process in round robin
   _CpuScheduler.rotate();
-  // Keep track of the new running process
-  _runningProcess = _CpuScheduler.readyQueue.peek();
 
 }
 
@@ -246,26 +243,16 @@ function krnKillProcess(pid)
 
 function krnKill()
 {
-  console.log("krnKillProcess");
 
-  var process = _runningProcess;
+  // Remove from scheduler
+  _CpuScheduler.kill();
 
-  if (process){
-
-    // Remove from scheduler
-    _CpuScheduler.kill();
-
-    if (_Cpu.Scheduler.readyQueue.getSize() > 1){
-      _runningProcess = _CpuScheduler.readyQueue.peek();
-    }
-
-  }
 };
 
 // Runs a process given the process
 function krnRunProcess(pcb)
 {
-  console.log(pcb.getPid());
+  console.log("krn run " + pcb.getPid());
   _CpuScheduler.schedule(pcb);
 };
 

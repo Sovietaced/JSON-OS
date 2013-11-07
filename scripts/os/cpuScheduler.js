@@ -17,18 +17,26 @@ function CpuScheduler() {
       this.readyQueue = new Queue();
     };
 
+    // Returns the head of the PCB
     this.getRunningProcess = function(){
       return this.readyQueue.peek();
     };
 
+    // Loads the state of the head PCB
+    this.loadProcess = function(){
+      if(this.readyQueue.getSize() > 0){
+        this.readyQueue.peek().loadState();
+      }
+    }
+
     this.schedule = function(pcb){
+
       this.readyQueue.enqueue(pcb);
 
       // If this is the first process set it up so it can begin executing
       if(this.readyQueue.getSize() === 1){
-        pcb.loadState();
+        this.loadProcess();
         _CPU.isExecuting = true;
-        console.log("Turning the CPU on");
       }
 
       console.log("Process " + pcb.getPid() + " scheduled.");
@@ -53,21 +61,18 @@ function CpuScheduler() {
 
     // Load next in round robin 
     this.rotate = function(){
-      
-      // Handles normal  when we have a running process
-      if (_runningProcess != null){
-        // Remove the head
-        var pcb = this.readyQueue.dequeue();
-        // Capture the CPU state
-        pcb.captureState();
-        // Add the head to the tail
-        this.readyQueue.enqueue(pcb);
-      }
 
-      // This will handle killed + normal switching switching
-      var pcb = this.readyQueue.peek();
+      // Remove the head
+      var pcb = this.readyQueue.dequeue();
 
-      pcb.loadState();
+      // Capture the CPU state
+      pcb.captureState();
+
+      // Add the head to the tail
+      this.readyQueue.enqueue(pcb);
+
+      // Load state of new head
+      this.loadProcess();
 
       console.log("Just switched processes");
 
@@ -75,8 +80,12 @@ function CpuScheduler() {
 
     this.kill = function() {
       
+      // Remove the head
       var process = this.readyQueue.dequeue();
       krnTrace("Scheduler :: Killing process " + process.getPid());
+
+      // Try to load the newhead
+      this.loadProcess();
 
     };
 
