@@ -221,6 +221,7 @@ function krnCreateProcess(program)
 function krnKill(pid)
 {
 
+  // Get the process
   var process = krnFindProcess(pid);
 
   if (process){
@@ -229,13 +230,16 @@ function krnKill(pid)
     process.kill();
 
     // Remove process from resident list
-    var index = _Processes.indexOf(process.getPid());
+    var index = _Processes.indexOf(process);
 
     if (index > -1) {
         _Processes.splice(index, 1);
-        console.log("removed from resident list");
     }
 
+    return true;
+  }
+  else{
+    return false;
   }
 };
 
@@ -250,7 +254,6 @@ function krnKillProcess()
 // Runs a process given the process
 function krnRunProcess(pcb)
 {
-  console.log("krn run " + pcb.getPid());
   _CpuScheduler.schedule(pcb);
 };
 
