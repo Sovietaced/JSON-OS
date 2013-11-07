@@ -107,11 +107,13 @@ function CLIconsole() {
        if (_CPU.Xreg == 1){
         _StdIn.advanceLine();
         _StdIn.putText(_CPU.Yreg.toString());
+        console.log("NAY");
         }
         // Print the 00 terminated string located in memory at location Yreg
         if (_CPU.Xreg == 2){
+          console.log("YAY");
             // Get value from memory
-            var memLocation = _CPU.Yreg;
+            var memLocation = _CPU.Yreg + + _CpuScheduler.getRunningProcess().getBase();
             var memory = _memoryManager.readMemory(memLocation);
             var zeroTermString = "";
             // Continue while not 00 terminated

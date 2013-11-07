@@ -162,9 +162,12 @@ function noOp(){
   if( _CPU.Zflag == 0){
       // Increment PC number of positions
       _CPU.PC += hexToInt(position);
-      if (_CPU.PC >= PROCESS_SIZE) {
-          // Memory out of bounds, no bueno
-          _CPU.PC -= PROCESS_SIZE;
+       if (_CPU.PC >= _CpuScheduler.getRunningProcess().getBase() + _CpuScheduler.getRunningProcess().getOffset()) {
+           // Memory out of bounds, no bueno
+           console.log("LALALALALALA " + _CPU.PC);
+           console.log(_CpuScheduler.getRunningProcess().getOffset());
+           _CPU.PC -=  _CpuScheduler.getRunningProcess().getOffset();
+           console.log("LALALALALALA " + _CPU.PC);
         }
       }
     }

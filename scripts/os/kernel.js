@@ -202,7 +202,7 @@ function krnCreateProcess(program)
 
       // PCB creation
       process = new PCB();    
-      process.init(getNextPID(), partition.low, partition.high); // Create process by passing in ID
+      process.init(getNextPID(), partition.low, RAM_SIZE/PARTITIONS); // Create process by passing in ID
       
       // Set the partition to active
       partition.pid = process.getPid();

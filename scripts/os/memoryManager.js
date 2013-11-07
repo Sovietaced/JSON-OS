@@ -25,7 +25,6 @@ function MemoryManager() {
     this.allocate = function(program){
 
       var partition = this.findFreePartition(); // Used to return
-      console.log(partition);
       var memoryPosition = partition.low; // Used to iterate
 
     	for(var i = 0; i < program.length; i+=2){
@@ -52,7 +51,7 @@ function MemoryManager() {
         return this.partitions[i];
       }
     }
-    
+
   };
 
   // Self explanatory
@@ -67,8 +66,8 @@ function MemoryManager() {
 
   // Nice help that does base conversions
   this.readValue = function(PC){
+      PC = parseInt(PC, 16) + _CpuScheduler.getRunningProcess().getBase();
 
-      PC = parseInt(PC, 16);
       PC = this.validate(PC);
 
       if (PC !== false){
@@ -79,7 +78,7 @@ function MemoryManager() {
 
   };
 
-   // Reads direct value
+   // Reads direct value, mostly to read instructions
   this.readMemory = function(PC){
 
     PC = this.validate(PC);
@@ -101,13 +100,13 @@ function MemoryManager() {
     PC = this.validate(PC + base);
 
     if (PC !== false){
-        console.log("PC " + (PC + base));
-        console.log("value : " + _CPU.Acc);
+        console.log("PC " + (PC));
+        // Hack fix to store 0s as 00
         if (value == 0){
           value = "00";
           console.log(value.toString(16));
         }
-      _RAM.writeMemory(PC + base, value.toString(16));
+      _RAM.writeMemory(PC, value.toString(16));
     }
   };
 
@@ -126,7 +125,6 @@ function MemoryManager() {
     }
     else {
     console.log("FAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIL");
-    console.log(_CpuScheduler.getRunningProcess().PC);
     console.log("low " + low);
     console.log("high " + high);
     console.log("PC " + PC);
