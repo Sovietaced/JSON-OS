@@ -84,25 +84,20 @@ function MemoryManager() {
     PC = this.validate(PC);
  
     if (PC !== false){
-      console.log("PC " + PC);
-      console.log("Instruction " + _RAM.readMemory(PC));
       return _RAM.readMemory(PC);
     }
   };
 
   // Nice help that does base conversions
   this.writeValue = function(PC, value){
-    console.log("writin");
 
     PC = parseInt(PC, 16);
     PC = this.validate(PC + _CpuScheduler.getRunningProcess().getBase());
 
     if (PC !== false){
-        console.log("PC " + (PC));
         // Hack fix to store single digits as 00
         if (value.toString().length){
           value = "0" + value.toString();
-          console.log("WRITE VALUEEEEEEEEEEEEEEEEEEE" + value.toString(16));
         }
       _RAM.writeMemory(PC, value.toString(16));
     }
@@ -114,19 +109,17 @@ function MemoryManager() {
   this.validate = function(PC){
 
     // Get PCB limits
-    var low = _CpuScheduler.getRunningProcess().getBase();
-    var high = low + _CpuScheduler.getRunningProcess().getOffset();
+    if(_CpuScheduler.getRunningProcess() != null){
+      var low = _CpuScheduler.getRunningProcess().getBase();
+      var high = low + _CpuScheduler.getRunningProcess().getOffset();
 
-    // Validate relative bounds and return absolute location
-    if(PC >= low && PC < high){
-      return PC;
-    }
-    else {
-    console.log("FAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIL");
-    console.log("low " + low);
-    console.log("high " + high);
-    console.log("PC " + PC);
-      krnTrapError("Memory Acces Out Of Bounds");
+      // Validate relative bounds and return absolute location
+      if(PC >= low && PC < high){
+        return PC;
+      }
+      else {
+        krnTrapError("Memory Acces Out Of Bounds");
+      }
     }
   };
 

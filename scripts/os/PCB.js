@@ -49,7 +49,6 @@
     };
 
      this.loadState = function(){
-      console.log("LOADING FROM PCB " + this.pid + " WITH PC " + this.PC);
       _CPU.Acc = this.Acc;
       _CPU.Xreg = this.Xreg;
       _CPU.Yreg = this.Yreg;

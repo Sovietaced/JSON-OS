@@ -143,7 +143,6 @@ function noOp(){
   }
 
   function brk(){
-    console.log("break");
     // Spawn Interrupt
     _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ, new Array("break")));
   }
@@ -163,11 +162,8 @@ function noOp(){
       // Increment PC number of positions
       _CPU.PC += hexToInt(position);
        if (_CPU.PC >= _CpuScheduler.getRunningProcess().getBase() + _CpuScheduler.getRunningProcess().getOffset()) {
-           // Memory out of bounds, no bueno
-           console.log("LALALALALALA " + _CPU.PC);
-           console.log(_CpuScheduler.getRunningProcess().getOffset());
+           // Memory out of bounds, loop around the boundary
            _CPU.PC -=  _CpuScheduler.getRunningProcess().getOffset();
-           console.log("LALALALALALA " + _CPU.PC);
         }
       }
     }

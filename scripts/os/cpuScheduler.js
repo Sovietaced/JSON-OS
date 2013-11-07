@@ -36,15 +36,13 @@ function CpuScheduler() {
       // If this is the first process set it up so it can begin executing
       if(this.readyQueue.getSize() === 1){
         this.loadProcess();
-        console.log("running");
         _CPU.isExecuting = true;
       }
 
-      console.log("Process " + pcb.getPid() + " scheduled.");
+      krnTrace("Process " + pcb.getPid() + " scheduled.");
     };
 
     this.run = function(){
-      console.log("clock " + this.clock);
         if (this.readyQueue.getSize() > 0){
           // Switch processes if we've reached the quantum value, increment clock ticks counter
           if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
@@ -52,11 +50,10 @@ function CpuScheduler() {
           }
         }
         else{
-          console.log("Stopping execution");
+          krnTrace("Scheduler has nothing to schedule. Stopping Execution");
           // We have nothing left to process
          _CPU.isExecuting = false;
         }
-
     };
 
     // Load next in round robin 
@@ -74,7 +71,7 @@ function CpuScheduler() {
       // Load state of new head
       this.loadProcess();
 
-      console.log("Just switched processes");
+      krnTrace("Scheduler has switched from rocess " + pcb.getPid() + " to process " + this.readyQueue.peek().getPid() + ".");
 
     };
 
@@ -82,7 +79,7 @@ function CpuScheduler() {
       
       // Remove the head
       var process = this.readyQueue.dequeue();
-      krnTrace("Scheduler :: Killing process " + process.getPid());
+      krnTrace("Scheduler has killed process " + process.getPid());
 
       // Try to load the newhead
       this.loadProcess();

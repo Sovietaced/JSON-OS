@@ -157,7 +157,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
               _StdIn.handleSystemCall();
               break;
             case "break":
-              krnKill();
+              krnKillProcess();
               break;
           }
             break;
@@ -218,7 +218,7 @@ function krnCreateProcess(program)
 };
 
 // For command line, assuming user isn't running this command while executing
-function krnKillProcess(pid)
+function krnKill(pid)
 {
 
   var process = krnFindProcess(pid);
@@ -239,7 +239,7 @@ function krnKillProcess(pid)
   }
 };
 
-function krnKill()
+function krnKillProcess()
 {
 
   // Remove from scheduler
