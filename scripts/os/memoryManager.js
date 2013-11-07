@@ -66,9 +66,9 @@ function MemoryManager() {
 
   // Nice help that does base conversions
   this.readValue = function(PC){
-      PC = parseInt(PC, 16) + _CpuScheduler.getRunningProcess().getBase();
 
-      PC = this.validate(PC);
+      PC = parseInt(PC, 16);
+      PC = this.validate(PC + _CpuScheduler.getRunningProcess().getBase());
 
       if (PC !== false){
         console.log("PC " + PC);
@@ -93,18 +93,16 @@ function MemoryManager() {
   // Nice help that does base conversions
   this.writeValue = function(PC, value){
     console.log("writin");
+
     PC = parseInt(PC, 16);
-
-    var base = _CpuScheduler.getRunningProcess().getBase();
-
-    PC = this.validate(PC + base);
+    PC = this.validate(PC + _CpuScheduler.getRunningProcess().getBase());
 
     if (PC !== false){
         console.log("PC " + (PC));
-        // Hack fix to store 0s as 00
-        if (value == 0){
-          value = "00";
-          console.log(value.toString(16));
+        // Hack fix to store single digits as 00
+        if (value.toString().length){
+          value = "0" + value.toString();
+          console.log("WRITE VALUEEEEEEEEEEEEEEEEEEE" + value.toString(16));
         }
       _RAM.writeMemory(PC, value.toString(16));
     }

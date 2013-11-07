@@ -157,7 +157,7 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
               _StdIn.handleSystemCall();
               break;
             case "break":
-              krnKillProcess();
+              krnKill();
               break;
           }
             break;

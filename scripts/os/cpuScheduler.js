@@ -50,7 +50,6 @@ function CpuScheduler() {
           if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
             _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
           }
-        
         }
         else{
           console.log("Stopping execution");
