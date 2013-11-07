@@ -116,6 +116,7 @@ function MemoryManager() {
         return PC;
       }
       else {
+         krnTrace("Memory out of bounds exception. Killing the process.");
         _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_OUT_OF_BOUNDS_IRQ)); 
       }
     }
