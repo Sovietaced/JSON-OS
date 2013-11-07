@@ -17,6 +17,10 @@ function CpuScheduler() {
       this.readyQueue = new Queue();
     };
 
+    this.getRunningProcess = function(){
+      return this.readyQueue.peek();
+    };
+
     this.schedule = function(pcb){
       this.readyQueue.enqueue(pcb);
 
@@ -33,17 +37,11 @@ function CpuScheduler() {
     this.run = function(){
 
         if (this.readyQueue.getSize() > 0){
-
-          if(_runningProcess == null){
+          // Switch processes if we've reached the quantum value, increment clock ticks counter
+          if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
             _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
           }
-          else{
-
-            // Switch processes if we've reached the quantum value, increment clock ticks counter
-            if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
-              _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
-            }
-          }
+        
         }
         else{
           console.log("Stopping execution");
@@ -89,4 +87,5 @@ function CpuScheduler() {
     this.updateDisplay = function(){
 
     };
+
 }

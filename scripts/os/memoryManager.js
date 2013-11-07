@@ -87,14 +87,14 @@ function MemoryManager() {
   this.validate = function(PC){
 
     // Get PCB limits
-    var low = _runningProcess.getBase();
-    var high = low + _runningProcess.getOffset();
+    var low = _CpuScheduler.getRunningProcess.getBase();
+    var high = low + _CpuScheduler.getRunningProcess.getOffset();
 
     if(PC + low >= low && PC < high){
       return true;
     }
     else {
-    console.log(_runningProcess.PC);
+    console.log(_CpuScheduler.getRunningProcess.PC);
     console.log("low " + low);
     console.log("high " + high);
     console.log("PC " + PC);
