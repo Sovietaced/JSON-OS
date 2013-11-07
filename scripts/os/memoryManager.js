@@ -71,8 +71,6 @@ function MemoryManager() {
       PC = this.validate(PC + _CpuScheduler.getRunningProcess().getBase());
 
       if (PC !== false){
-        console.log("PC " + PC);
-        console.log("Instruction " + _RAM.readMemory(PC));
         return parseInt(_RAM.readMemory(PC), 16);
       }
 
@@ -118,7 +116,7 @@ function MemoryManager() {
         return PC;
       }
       else {
-        krnTrapError("Memory Acces Out Of Bounds");
+        _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_OUT_OF_BOUNDS_IRQ)); 
       }
     }
   };

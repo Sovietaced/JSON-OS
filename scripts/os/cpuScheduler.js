@@ -13,7 +13,7 @@ function CpuScheduler() {
 
     this.init = function(){
       this.quantum = 6;     // Quantum value in clock ticks
-      this.clock = 0;
+      this.clock = 0;       // Clock ticks to evaluate when switching is necessary
       this.readyQueue = new Queue();
     };
 
@@ -22,7 +22,7 @@ function CpuScheduler() {
       return this.readyQueue.peek();
     };
 
-    // Loads the state of the head PCB
+    // Loads the state of the head PCB after switching
     this.loadProcess = function(){
       if(this.readyQueue.getSize() > 0){
         this.readyQueue.peek().loadState();

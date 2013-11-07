@@ -23,6 +23,7 @@ var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prio
 var KEYBOARD_IRQ = 1;  
 var SYS_OPCODE_IRQ = 2;
 var SCHEDULER_IRQ = 3; 
+var MEMORY_OUT_OF_BOUNDS_IRQ = 4;
 
 //
 // Global Variables

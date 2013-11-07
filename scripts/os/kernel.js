@@ -35,14 +35,15 @@ function krnBootstrap()      // Page 8.
    krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
    krnTrace(krnKeyboardDriver.status);
 
-   // 
+   // Process related stoof
    _Processes = new Array();            // Resident List
-   _memoryManager = new MemoryManager(); 
-   _memoryManager.init();
    _CpuScheduler = new CpuScheduler();
    _CpuScheduler.init();
    _nextPID = 0;                        // Counter for delegating PIDs
-   //
+
+   // Memory related stoof
+   _memoryManager = new MemoryManager(); 
+   _memoryManager.init();
 
    // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
    krnTrace("Enabling the interrupts.");
@@ -161,6 +162,10 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
               break;
           }
             break;
+          case MEMORY_OUT_OF_BOUNDS_IRQ:
+            krnKillProcess();
+            break;
+
         default: 
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
     }
@@ -184,8 +189,6 @@ function krnSwitch()
 // Some ideas:
 // - ReadConsole
 // - WriteConsole
-// - CreateProcess
-// - ExitProcess
 // - WaitForProcessToExit
 // - CreateFile
 // - OpenFile
@@ -193,6 +196,8 @@ function krnSwitch()
 // - WriteFile
 // - CloseFile
 
+
+// Handles everything for creating a process
 function krnCreateProcess(program)
 {
     // Attempt to allocate memory for program
@@ -243,10 +248,9 @@ function krnKill(pid)
   }
 };
 
+// Remove head process from scheduler
 function krnKillProcess()
 {
-
-  // Remove from scheduler
   _CpuScheduler.kill();
 
 };
@@ -318,4 +322,5 @@ function krnTrapError(msg)
     hostLog("OS ERROR - TRAP: " + msg);
     _StdIn.bsod(msg);
     krnShutdown();
+    _CPU.isExecuting = false;
 }
