@@ -36,6 +36,7 @@ function CpuScheduler() {
       // If this is the first process set it up so it can begin executing
       if(this.readyQueue.getSize() === 1){
         this.loadProcess();
+        console.log("running");
         _CPU.isExecuting = true;
       }
 

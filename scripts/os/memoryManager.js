@@ -44,6 +44,7 @@ function MemoryManager() {
         // Not that advanced but it should work for now
         freeMemoryLocation = process.getBase() + process.getOffset();
      }
+     console.log("free mem " + freeMemoryLocation);
      return freeMemoryLocation;
   };
 
@@ -59,9 +60,11 @@ function MemoryManager() {
 
   // Nice help that does base conversions
   this.readValue = function(PC){
-      PC = parseInt(PC, 16);
 
-      if (this.validate(PC)){
+      PC = parseInt(PC, 16);
+      PC = this.validate(PC);
+
+      if (PC !== false){
         return parseInt(_RAM.readMemory(PC, 16));
       }
 
@@ -69,16 +72,23 @@ function MemoryManager() {
 
    // Reads direct value
   this.readMemory = function(PC){
-    if (this.validate(PC)){
+    console.log("PC PRE VAL " + PC);
+    PC = this.validate(PC);
+ 
+    if (PC !== false){
+      console.log("PC " + PC);
+      console.log(_RAM.readMemory(PC));
       return _RAM.readMemory(PC);
     }
   };
 
   // Nice help that does base conversions
   this.writeValue = function(PC, value){
-    PC = parseInt(PC, 16);
 
-    if (this.validate(PC)){
+    PC = parseInt(PC, 16);
+    PC = this.validate(PC);
+
+    if (PC !== false){
       _RAM.writeMemory(PC, value.toString(16));
     }
   };
@@ -92,8 +102,9 @@ function MemoryManager() {
     var low = _CpuScheduler.getRunningProcess().getBase();
     var high = low + _CpuScheduler.getRunningProcess().getOffset();
 
-    if(PC + low >= low && PC < high){
-    low + PC;
+    // Validate relative bounds and return absolute location
+    if(PC >= low && PC < high){
+      return PC;
     }
     else {
     console.log(_CpuScheduler.getRunningProcess().PC);

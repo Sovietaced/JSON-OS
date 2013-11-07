@@ -148,10 +148,6 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
                 case "switch":
                     krnSwitch();
                     break;
-                case "kill":
-                    console.log("requesting a kill");
-                    krnKillProcess(params[1]);
-                    break;
             }
             break;
         // Hard interrupts
