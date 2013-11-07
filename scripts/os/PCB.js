@@ -57,6 +57,10 @@
       _CPU.PC = this.PC;
     };
 
+    this.kill = function(){
+      _memoryManager.clearMemory(this.base, this.offset);
+    };
+
     this.updateDisplay = function(){
       $('#pcb-PID').html(this.pid);
       $('#pcb-PC').html(this.PC);

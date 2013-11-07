@@ -144,8 +144,8 @@ function noOp(){
 
   function brk(){
     console.log("break");
-    // Stop executing
-    _CPU.isExecuting = false;
+    // Spawn Interrupt
+    _KernelInterruptQueue.enqueue(new Interrupt(SYS_BREAK_IRQ));
   }
 
   function compare(PC){

@@ -98,12 +98,10 @@ function krnOnCPUClockPulse()
     {   
         _CpuScheduler.run();
         _CPU.cycle();
+
         _memoryManager.updateDisplay();
         _CPU.updateDisplay();
-    }    
-    else if (_runningProcess != null && !_CPU.isExecuting){
-      _CpuScheduler.run();
-    } 
+    }     
     else                     // If there are no interrupts and there is nothing being executed then just be idle.
     {
        krnTrace("Idle");
@@ -151,10 +149,22 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
                 case "switch":
                     krnSwitch();
                     break;
+                case "kill":
+                    console.log("requesting a kill");
+                    krnKillProcess(params[1]);
+                    break;
             }
             break;
+        // Hard interrupts
         case SYS_OPCODE_IRQ:
-            _StdIn.handleSystemCall();
+          switch(params[0]) {
+            case "print":
+              _StdIn.handleSystemCall();
+              break;
+            case "break":
+              krnKillProcess(_runningProcess.getPid());
+              break;
+          }
             break;
         default: 
             krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -167,9 +177,12 @@ function krnTimerISR()  // The built-in TIMER (not clock) Interrupt Service Rout
 }   
 
 function krnSwitch()
-{
+{ 
   // Moves to the next process in round robin
   _CpuScheduler.rotate();
+  // Keep track of the new running process
+  _runningProcess = _CpuScheduler.readyQueue.peek();
+
 }
 
 //
@@ -209,20 +222,43 @@ function krnCreateProcess(program)
     }
 };
 
+// For command line, assuming user isn't running this command while executing
 function krnKillProcess(pid)
 {
+
   var process = krnFindProcess(pid);
 
   if (process){
-    // Zero out memory
-    _memoryManager.clearMemory(process.getBase(), process.getOffset());
 
-     for (var i = 0; i < _Processes.length; i++ ){
-        if (_Processes[i].getPid() == parseInt(pid)){
-            // Remove process from process list
-            _Processes.splice(i,1);
-        }
+    // Do memory cleanup
+    process.kill();
+
+    // Remove process from resident list
+    var index = _Processes.indexOf(process.getPid());
+
+    if (index > -1) {
+        _Processes.splice(index, 1);
+        console.log("removed from resident list");
     }
+
+  }
+};
+
+function krnKill()
+{
+  console.log("krnKillProcess");
+
+  var process = _runningProcess;
+
+  if (process){
+
+    // Remove from scheduler
+    _CpuScheduler.kill();
+
+    if (_Cpu.Scheduler.readyQueue.getSize() > 1){
+      _runningProcess = _CpuScheduler.readyQueue.peek();
+    }
+
   }
 };
 

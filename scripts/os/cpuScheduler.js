@@ -22,7 +22,7 @@ function CpuScheduler() {
 
       // If this is the first process set it up so it can begin executing
       if(this.readyQueue.getSize() === 1){
-        this.loadPCB(pcb);
+        pcb.loadState();
         _CPU.isExecuting = true;
         console.log("Turning the CPU on");
       }
@@ -32,59 +32,54 @@ function CpuScheduler() {
 
     this.run = function(){
 
-      // Handle finished program
-      if (!_CPU.isExecuting){
-        console.log("we here now");
-        this.readyQueue.dequeue();
-      }
-      
-      if (this.readyQueue.getSize() > 0){
+        if (this.readyQueue.getSize() > 0){
 
-          // Make sure we're executing
-          _CPU.isExecuting = true;
-
-          // Switch processes if we've reached the quantum value, increment clock ticks counter
-          if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
-            _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch")));
+          if(_runningProcess == null){
+            _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
           }
-
-          // Get the head
-          var pcb = this.readyQueue.peek();
-          // Let the kernel know what process we're currently running
-          if(_runningProcess != pcb){
-            _runningProcess = pcb;
-            this.loadPCB(pcb);
-          }
-          // Process hasn't changed so carry on
           else{
 
+            // Switch processes if we've reached the quantum value, increment clock ticks counter
+            if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
+              _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
+            }
           }
         }
         else{
-         _runningProcess = null;
-          console.log("WE STOPPING!");
+          console.log("Stopping execution");
+          // We have nothing left to process
+         _CPU.isExecuting = false;
         }
-
 
     };
 
-    // Rotate the queue so that the head is moved to the back (Round Robin)
+    // Load next in round robin 
     this.rotate = function(){
       
-      // Remove the head
-      var pcb = this.readyQueue.dequeue();
-      // Capture the CPU state
-      pcb.captureState();
-      // Add the head to the tail
-      this.readyQueue.enqueue(pcb);
+      // Handles normal  when we have a running process
+      if (_runningProcess != null){
+        // Remove the head
+        var pcb = this.readyQueue.dequeue();
+        // Capture the CPU state
+        pcb.captureState();
+        // Add the head to the tail
+        this.readyQueue.enqueue(pcb);
+      }
+
+      // This will handle killed + normal switching switching
+      var pcb = this.readyQueue.peek();
+
+      pcb.loadState();
 
       console.log("Just switched processes");
 
     };
 
-    this.loadPCB = function(pcb){
-      // This loads PCB state into CPU
-      pcb.loadState();
+    this.kill = function() {
+      
+      var process = this.readyQueue.dequeue();
+      krnTrace("Scheduler :: Killing process " + process.getPid());
+
     };
 
     this.setQuantum = function(quantum){
