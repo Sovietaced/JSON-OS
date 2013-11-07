@@ -69,6 +69,6 @@
     };
 
     this.toArray = function(){
-      return new Array(this.pid, this.PC, this.Acc, this.Xreg, this.Yreg, this.Zflag);
+      return new Array(this.pid, this.PC, this.base, this.offset, this.Acc, this.Xreg, this.Yreg, this.Zflag);
     };
   }

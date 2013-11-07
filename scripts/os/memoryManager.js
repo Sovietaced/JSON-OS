@@ -9,6 +9,7 @@ function MemoryManager() {
 
     this.partitions = {};
 
+    // Generate partitions
     this.init = function(){
 
       var partitionSize = RAM_SIZE/PARTITIONS;

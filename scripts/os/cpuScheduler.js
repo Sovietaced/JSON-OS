@@ -106,7 +106,7 @@ function CpuScheduler() {
       $("#readyQueue").empty(); 
 
       // Rende heading row
-      data = "<td>PID</td><td>PC</td><td>Acc</td><td>XReg</td><td>YReg</td><td>ZFlag</td>"
+      data = "<td>PID</td><td>PC</td><td>Base</td><td>Offset</td><td>Acc</td><td>XReg</td><td>YReg</td><td>ZFlag</td>"
       $('#readyQueue').append('<tr>' + data + '</tr>');
 
       // Render HTML and push it
