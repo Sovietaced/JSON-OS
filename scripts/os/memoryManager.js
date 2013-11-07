@@ -8,13 +8,15 @@
 function MemoryManager() {
 
     this.init = function(){
+
+      this.partitions = new Array(PARTITIONS);
         
     };
 
     // Allocates instructions to bytes in memory
     this.allocate = function(program){
 
-      var memoryBase = this.findFreeMemory(); // Used to return
+      var memoryBase = this.findFreePartition(); // Used to return
       var memoryPosition = memoryBase; // Used to iterate
 
     	for(var i = 0; i < program.length; i+=2){
@@ -94,7 +96,12 @@ function MemoryManager() {
     PC = this.validate(PC + base);
 
     if (PC !== false){
-        console.log("PC " + PC + base);
+        console.log("PC " + (PC + base));
+        console.log("value : " + _CPU.Acc);
+        if (value == 0){
+          value = "00";
+          console.log(value.toString(16));
+        }
       _RAM.writeMemory(PC + base, value.toString(16));
     }
   };
