@@ -94,6 +94,10 @@ function hostBtnStartOS_click(btn)
     _RAM = new Ram();
     _RAM.init();
 
+       // ... Create and initialize the RAM ...
+    _HDD = new Hdd();
+    _HDD.init();
+
     // .. and call the OS Kernel Bootstrap routine.
     krnBootstrap();
 }
