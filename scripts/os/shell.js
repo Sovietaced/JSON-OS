@@ -33,6 +33,13 @@ function shellInit() {
     sc.function = shellVer;
     this.commandList[this.commandList.length] = sc;
     
+     // create
+    sc = new ShellCommand();
+    sc.command = "create";
+    sc.description = "<data> - Creates a file with specified data";
+    sc.function = shellCreate;
+    this.commandList[this.commandList.length] = sc;
+
     // date
     sc = new ShellCommand();
     sc.command = "date";
@@ -355,6 +362,15 @@ function shellApology()
 function shellVer(args)
 {
     _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
+}
+
+function shellCreate(args)
+{   
+    //TODO : Error checking
+    var name = args[0];
+    var data = args.slice(1,args.length).join("");
+
+    krnCreateFile(name,data);
 }
 
 function shellDate(args)
