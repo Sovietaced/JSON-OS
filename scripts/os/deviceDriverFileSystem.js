@@ -32,7 +32,8 @@ var BLOCKS = {
     36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]
 }
 
-var MBR_TSB = "000"
+var MBR_TSB = "000";
+var DIRECTORY_TSB = "001";
 
 function DeviceDriverFileSystem()                     // Add or override specific attributes and method pointers.
 {
@@ -62,15 +63,41 @@ function generateTSB(t,s,b)
    return t.toString() + s.toString() + b.toString();
 }
 
-// Generates block data in hex
-function generateDiskData(activity, t, s, b, data) 
+function incrementTSB(tsb)
 {   
-    var TSB = generateTSB(t,s,b);
-    if (data == ''){ 
-        data = Array(61).join("0")
+    var values = tsb.split("");
+
+    if (parseInt(values[2]) < 7){
+        values[2] = (parseInt(values[2]) + 1) + '';
     }
+    else {
+        values[2] = "0";
+        if (parseInt(values[1]) < 7){
+            values[1] = (parseInt(values[1]) + 1) + '';
+        }
+        else{
+            values[1] = "0";
+            if (parseInt(values[0]) < 3){
+                values[0] = (parseInt(values[0]) + 1) + '';
+            }
+            else{
+                return null;
+            }
+        }
+    }
+    values = values.join("");
+    return values;
+}
+
+// Generates block data in hex
+function generateDiskData(activity, tsb, data) 
+{   
+    // Fill buffer with dashes, we write entire blocks at a time because the HDD is a hash
+    var buffer = 61 - data.length;
+    data = data + Array(buffer).join("-");
+
     // Convert values to strings, map get ASCII calues to hex strings
-    return (activity.toString() + TSB + data.toString()).split ('').map (function (c) { return c.charCodeAt(0).toString(16); })
+    return (activity.toString() + tsb + data.toString()).split ('').map (function (c) { return c.charCodeAt(0).toString(16); })
 }
 
 function decodeDiskData(dataa)
@@ -108,7 +135,7 @@ function krnFSDispatchDiskRequest(params)
 function krnFSFormat()
 {   
     // Format the directory
-    directory = {}
+    directory = new Stack();
 
     // Format the disk
     for (var t =0; t < NUM_TRACKS; t++){
@@ -116,15 +143,16 @@ function krnFSFormat()
             for (var b = 0; b < NUM_BLOCKS; b++){
 
                 var tsb = generateTSB(t,s,b);
-                var data = generateDiskData(0, '-', '-', '-', "");
+                var data = generateDiskData(0, generateTSB('-', '-', '-'), "");
 
                 // Generate MBR code
                 if (tsb === MBR_TSB){
-                    data = generateDiskData(1, '-', '-', '-', "MBR");
+                    data = generateDiskData(1, generateTSB('-', '-', '-'), "MBR");
                 }
 
                 // Write data to disk
                 disk.write(tsb,data);
+
             }
         }
     }
@@ -136,6 +164,44 @@ function krnCreateFile(name, data)
 
     var freeBlock = findFreeBlock();
 
+    var top = directory.peek();
+
+    if (top){
+        var directoryTSB = incrementTSB(top.data);
+        krnWriteFileDirectory(directoryTSB, freeBlock, name);
+        krnWriteFileData(freeBlock, data);
+        directory.push(directoryTSB);
+        console.log(directory.top.data);
+        console.log(disk.read(freeBlock))
+    }
+    else{
+        krnWriteFileDirectory(DIRECTORY_TSB, freeBlock, name);
+        krnWriteFileData(freeBlock, data);
+        directory.push(DIRECTORY_TSB);
+        console.log(directory.top.data);
+    }
+
+
+}
+
+function krnWriteFileData(tsb, data)
+{   
+    //TODO : HANDLE SIZE LARGER THAN 60
+
+    // active | TSB of file | file name
+    var data = generateDiskData("1", generateTSB('-', '-', '-'), data);
+
+    // Write file to file TSB
+    disk.write(tsb, data);
+}
+
+function krnWriteFileDirectory(directoryTSB, fileTSB, name)
+{
+    // active | TSB of file | file name
+    var data = generateDiskData("1", fileTSB, name);
+
+    // Write data about file in directory TSB
+    disk.write(directoryTSB, data);
 }
 
 function findFreeBlock()
