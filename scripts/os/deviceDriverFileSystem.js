@@ -13,9 +13,11 @@ var disk = null;
 var directory = null;
 
 // Constants
-var TRACK_SIZE = 4;
-var SECTOR_SIZE = 8;
-var BLOCK_SIZE = 8;
+var NUM_TRACKS = 4;
+var NUM_SECTORS = 8;
+var NUM_BLOCKS = 8;
+
+var BLOCK_SIZE = 64;
 
 var TRACKS = {
      DIRECTORY_DATA : [0],
@@ -43,6 +45,21 @@ function krnFSDriverEntry()
     // More?
 }
 
+// For getting a TSB string
+function generateTSB(t,s,b)
+{   
+    // Convert values to string and concatenate
+   return t.toString() + s.toString() + b.toString();
+}
+
+// Generates block data in hex
+function generateDiskData(activity, t, s, b, data)
+{   
+    var TSB = generateTSB(t,s,b);
+    // Convert values to strings, map get ASCII calues to hex strings
+    return (activity.toString() + TSB + data.toString()).split ('').map (function (c) { return c.charCodeAt(0).toString(16); })
+}
+
 function krnFSDispatchDiskRequest(params)
 {
    
@@ -51,4 +68,15 @@ function krnFSDispatchDiskRequest(params)
 function krnFSFormat()
 {
     directory = {}                               // Instantiate clean direcotry data
+    for (var t =0; t < NUM_TRACKS; t++){
+        for (var s = 0; s < NUM_SECTORS; s++){
+            for (var b = 0; b < NUM_BLOCKS; b++){
+                var tsb = TSB(t,s,b);
+                var data = 
+                disk.write()
+            }
+        }
+    }
 }
+
+
