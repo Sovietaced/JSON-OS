@@ -171,14 +171,15 @@ function krnCreateFile(name, data)
         krnWriteFileDirectory(directoryTSB, freeBlock, name);
         krnWriteFileData(freeBlock, data);
         directory.push(directoryTSB);
-        console.log(directory.top.data);
-        console.log(disk.read(freeBlock))
+        console.log(freeBlock);
+        console.log(disk.read(freeBlock));
     }
     else{
         krnWriteFileDirectory(DIRECTORY_TSB, freeBlock, name);
         krnWriteFileData(freeBlock, data);
         directory.push(DIRECTORY_TSB);
-        console.log(directory.top.data);
+        console.log(freeBlock);
+        console.log(disk.read(freeBlock));
     }
 
 
@@ -189,8 +190,9 @@ function krnWriteFileData(tsb, data)
     //TODO : HANDLE SIZE LARGER THAN 60
 
     // active | TSB of file | file name
-    var data = generateDiskData("1", generateTSB('-', '-', '-'), data);
+    var data = generateDiskData(1, generateTSB('-', '-', '-'), data);
 
+    console.log(data);
     // Write file to file TSB
     disk.write(tsb, data);
 }
@@ -198,7 +200,7 @@ function krnWriteFileData(tsb, data)
 function krnWriteFileDirectory(directoryTSB, fileTSB, name)
 {
     // active | TSB of file | file name
-    var data = generateDiskData("1", fileTSB, name);
+    var data = generateDiskData(1, fileTSB, name);
 
     // Write data about file in directory TSB
     disk.write(directoryTSB, data);
@@ -219,6 +221,8 @@ function findFreeBlock()
 
                 // Check for non active
                 if (data['activity'] == '0'){
+                     console.log(data);
+                console.log(tsb);
                     return tsb;
                 }
             }

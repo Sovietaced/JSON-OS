@@ -6,26 +6,22 @@
    ------------ */
 
 function Hdd() {
-    this.disk = null; 
 
     this.init = function() {
-      // Check for web storage support
-     if(typeof(Storage)!=="undefined"){
-          this.disk = localStorage;
-        }
+
     };
 
     this.write = function(tsb, value) {
-      this.disk[tsb] = value;
+      localStorage[tsb] = value;
     };
 
-    this.read = function(key) {
-      return this.disk[tsb];
+    this.read = function(tsb) {
+      return localStorage[tsb];
     };
 
     this.debug = function() {
-      for (tsb in this.disk){
-        console.log(this.disk[tsb]);
+      for (tsb in localStorage){
+        console.log(localStorage[tsb]);
       }
     }
 }
