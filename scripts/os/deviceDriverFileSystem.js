@@ -42,6 +42,8 @@ function krnFSDriverEntry()
     disk = _HDD;                                // Assign Hardawre to driver
     krnFSFormat();                              // Format the disk
     this.status = "loaded";
+
+    disk.debug();
     // More?
 }
 
@@ -68,12 +70,13 @@ function krnFSDispatchDiskRequest(params)
 function krnFSFormat()
 {
     directory = {}                               // Instantiate clean direcotry data
+
     for (var t =0; t < NUM_TRACKS; t++){
         for (var s = 0; s < NUM_SECTORS; s++){
             for (var b = 0; b < NUM_BLOCKS; b++){
-                var tsb = TSB(t,s,b);
-                var data = 
-                disk.write()
+                var tsb = generateTSB(t,s,b);
+                var data = generateDiskData(0, '-', '-', '-', "");
+                disk.write(tsb,data);
             }
         }
     }

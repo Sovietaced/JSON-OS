@@ -15,11 +15,17 @@ function Hdd() {
         }
     };
 
-    this.writeDisk = function(tsb, value) {
+    this.write = function(tsb, value) {
       this.disk[tsb] = value;
     };
 
-    this.readDisk = function(key) {
+    this.read = function(key) {
       return this.disk[tsb];
     };
+
+    this.debug = function() {
+      for (tsb in this.disk){
+        console.log(this.disk[tsb]);
+      }
+    }
 }

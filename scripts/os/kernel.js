@@ -35,6 +35,12 @@ function krnBootstrap()      // Page 8.
    krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
    krnTrace(krnKeyboardDriver.status);
 
+   // Load the File System Device Driver
+   krnTrace("Loading the file system device driver.");
+   krnFSDriver = new DeviceDriverFileSystem();     // Construct it.  TODO: Should that have a _global-style name?
+   krnFSDriver.driverEntry();                    // Call the driverEntry() initialization routine.
+   krnTrace(krnFSDriver.status);
+
    // Process related stoof
    _Processes = new Array();            // Resident List
    _CpuScheduler = new CpuScheduler();
