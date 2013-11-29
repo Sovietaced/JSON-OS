@@ -142,6 +142,7 @@ function krnFSFormat()
         for (var s = 0; s < NUM_SECTORS; s++){
             for (var b = 0; b < NUM_BLOCKS; b++){
 
+                // Generate TSB for cuntion and generate data
                 var tsb = generateTSB(t,s,b);
                 var data = generateDiskData(0, generateTSB('-', '-', '-'), "");
 
@@ -171,15 +172,12 @@ function krnCreateFile(name, data)
         krnWriteFileDirectory(directoryTSB, freeBlock, name);
         krnWriteFileData(freeBlock, data);
         directory.push(directoryTSB);
-        console.log(freeBlock);
-        console.log(disk.read(freeBlock));
+        console.log(directory.peek().data);
     }
     else{
         krnWriteFileDirectory(DIRECTORY_TSB, freeBlock, name);
         krnWriteFileData(freeBlock, data);
         directory.push(DIRECTORY_TSB);
-        console.log(freeBlock);
-        console.log(disk.read(freeBlock));
     }
 
 
@@ -192,7 +190,17 @@ function krnWriteFileData(tsb, data)
     // active | TSB of file | file name
     var data = generateDiskData(1, generateTSB('-', '-', '-'), data);
 
-    console.log(data);
+    // Write file to file TSB
+    disk.write(tsb, data);
+}
+
+function krnRemoveFileData(tsb)
+{   
+    //TODO : HANDLE SIZE LARGER THAN 60
+
+    // active | TSB of file | file name
+    var data = generateDiskData(0, generateTSB('-', '-', '-'), '');
+
     // Write file to file TSB
     disk.write(tsb, data);
 }
@@ -206,6 +214,15 @@ function krnWriteFileDirectory(directoryTSB, fileTSB, name)
     disk.write(directoryTSB, data);
 }
 
+function krnRemoveFileDirectory(directoryTSB)
+{
+    // active | TSB of file | file name
+    var data = generateDiskData(0, generateTSB('-', '-', '-'), '');
+
+    // Write data about file in directory TSB
+    disk.write(directoryTSB, data);
+}
+
 function findFreeBlock()
 {
     for (var t = 0; t < TRACKS.FILE_DATA.length; t++){
@@ -213,6 +230,7 @@ function findFreeBlock()
         for (var s = 0; s < NUM_SECTORS; s++){
             for (var b = 0; b < NUM_BLOCKS; b++){
 
+                // Generate TSB for function
                 var tsb = generateTSB(track,s,b);
                 var data = disk.read(tsb);
 
@@ -221,8 +239,6 @@ function findFreeBlock()
 
                 // Check for non active
                 if (data['activity'] == '0'){
-                     console.log(data);
-                console.log(tsb);
                     return tsb;
                 }
             }
