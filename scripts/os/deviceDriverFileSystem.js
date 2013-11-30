@@ -158,7 +158,7 @@ function krnFSFormat()
 function krnListFiles()
 {
     var files = '';
-    var t = TRACKS.DIRECTORY_DATA
+    var t = TRACKS.DIRECTORY_DATA;
 
     for (var s = 0; s < NUM_SECTORS; s++){
         for (var b = 0; b < NUM_BLOCKS; b++){
@@ -169,12 +169,15 @@ function krnListFiles()
 
             // Get value hash
             data = decodeDiskData(data);
+            console.log(data);
 
             // Check for active
             if (data['activity'] == '1'){
                 // Get value by shaving off null characters (dashes)
                 var value = data['data'].toString();
                 value = value.slice(0, value.indexOf("-"));
+
+                console.log(value);
 
                 if (value != ''){
                     files += value + ' '
@@ -251,8 +254,32 @@ function krnWriteFile(fileName, data)
     var tsb = findFile(fileName);
 
     if (tsb){
-        krnRemoveFileData(tsb);
-        krnRemoveFileDirectory(tsb);
+        // Get actual file TSB
+        var tsb = getFileTSB(tsb);
+
+        if (data.length > BLOCK_DATA_SIZE){
+
+            // Get the overflow size, we only care about the length
+            var remainder = data.substring(0, data.length - BLOCK_DATA_SIZE);
+
+            // Get the blocks needed for the data
+            var freeFileBlocks = findFreeFileBlocks(remainder);
+
+            if (!freeFileBlocks){
+                return "Failed to write file. Ran out of free file space";
+            }
+            // Append the existing block for the file to the front so we reuse the existing block
+            freeFileBlocks.unshift(tsb);
+        }
+        else{
+
+            var freeFileBlocks = [tsb];
+            console.log(freeFileBlocks);
+        }
+
+        krnWriteFileData(freeFileBlocks, data);
+
+        return true;        
     }
     else{
         return "File not found";
@@ -303,9 +330,14 @@ function findFile(fileName)
 }
 
 function krnWriteFileData(blocks, data)
-{   
+{      
     // This splits the data into an array of strings, each string with a max size of 60. regex magic...
     var dataBlocks = data.match(/.{1,60}/g);
+
+     // Make sure we handle empty files
+    if(data == ''){
+        dataBlocks = [''];    
+    }
 
     for (var i = 0; i < dataBlocks.length; i++){
         
@@ -337,7 +369,7 @@ function krnRemoveFileData(tsb)
 
         // Set the TSB to the TSB described by the chain
         oldData = decodeDiskData(oldData);
-        tsb = generateTSB(oldData['track'],oldData['sector'], oldData['block']);
+        tsb = getNextTSB(oldData);
 
     } while(tsb != '---');
 }
@@ -364,6 +396,12 @@ function findFreeFileBlocks(fileData)
 {   
     // Get the number of blocks needed and round up
     var numBlocks = Math.ceil(fileData.length / BLOCK_DATA_SIZE);
+
+    // Make sure we handle empty files
+    if(fileData == ''){
+        numBlocks = 1;
+    }
+
     var blocks = [];
 
     for (var t = 0; t < TRACKS.FILE_DATA.length; t++){

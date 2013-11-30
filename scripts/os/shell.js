@@ -44,14 +44,14 @@ function shellInit() {
     sc = new ShellCommand();
     sc.command = "read";
     sc.description = "<filename> - Reads the values of the specified file";
-    sc.function = shellRead     ;
+    sc.function = shellRead;
     this.commandList[this.commandList.length] = sc;
 
     // write
     sc = new ShellCommand();
     sc.command = "write";
     sc.description = "<filename> <string> - Writes specified string to the specified file";
-    sc.function = shellRead     ;
+    sc.function = shellWrite;
     this.commandList[this.commandList.length] = sc;
 
      // create
