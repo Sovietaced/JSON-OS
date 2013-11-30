@@ -186,10 +186,7 @@ function krnListFiles()
             }
         }
     }
-
     return files;
-
-
 }
 
 // create <name> <data>
@@ -204,6 +201,28 @@ function krnCreateFile(name, data)
 
     console.log(freeDirectoryBlock);
     console.log(freeFileBlock);
+}
+
+function krnReadFile(fileName)
+{
+    var tsb = findFile(fileName);
+
+    if (tsb) {
+
+        // Get TSB of file from directory data
+        var data = disk.read(tsb);
+        data = decodeDiskData(data);
+        tsb = generateTSB(data['track'], data['sector'], data['block']);
+        
+        // Get file values  
+        data = disk.read(tsb);
+        data = decodeDiskData(data);
+
+        var value = data['data'].toString();
+        value = value.slice(0, value.indexOf("-"));
+
+        return value;
+    }
 }
 
 // delete <name>

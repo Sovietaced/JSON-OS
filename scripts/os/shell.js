@@ -40,6 +40,13 @@ function shellInit() {
     sc.function = shellLs;
     this.commandList[this.commandList.length] = sc;
 
+    // read
+    sc = new ShellCommand();
+    sc.command = "read";
+    sc.description = "<filename> - Reads the values of the specified file";
+    sc.function = shellRead;
+    this.commandList[this.commandList.length] = sc;
+
      // create
     sc = new ShellCommand();
     sc.command = "create";
@@ -381,6 +388,12 @@ function shellVer(args)
 function shellLs()
 {
     _StdIn.putText(krnListFiles());
+}
+
+function shellRead(args)
+{   
+    var name = args[0];
+    _StdIn.putText(krnReadFile(name));
 }
 
 function shellCreate(args)
