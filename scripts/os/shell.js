@@ -44,7 +44,7 @@ function shellInit() {
     sc = new ShellCommand();
     sc.command = "read";
     sc.description = "<filename> - Reads the values of the specified file";
-    sc.function = shellRead;
+    sc.function = shellRead     ;
     this.commandList[this.commandList.length] = sc;
 
      // create
@@ -400,7 +400,7 @@ function shellCreate(args)
 {   
     //TODO : Error checking
     var name = args[0];
-    var data = args.slice(1,args.length).join("");
+    var data = args.slice(1,args.length).join(" ");
 
     krnCreateFile(name,data);
 }
