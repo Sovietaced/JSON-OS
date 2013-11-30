@@ -33,11 +33,25 @@ function shellInit() {
     sc.function = shellVer;
     this.commandList[this.commandList.length] = sc;
     
+    // ls
+    sc = new ShellCommand();
+    sc.command = "ls";
+    sc.description = "- List the files in the current directory";
+    sc.function = shellLs;
+    this.commandList[this.commandList.length] = sc;
+
      // create
     sc = new ShellCommand();
     sc.command = "create";
-    sc.description = "<data> - Creates a file with specified data";
+    sc.description = "<filename> <data> - Creates a file with specified data";
     sc.function = shellCreate;
+    this.commandList[this.commandList.length] = sc;
+
+    // delete
+    sc = new ShellCommand();
+    sc.command = "delete";
+    sc.description = "<filename> - Deletes a file by the given name";
+    sc.function = shellDelete;
     this.commandList[this.commandList.length] = sc;
 
     // date
@@ -364,6 +378,11 @@ function shellVer(args)
     _StdIn.putText(APP_NAME + " version " + APP_VERSION);    
 }
 
+function shellLs()
+{
+    _StdIn.putText(krnListFiles());
+}
+
 function shellCreate(args)
 {   
     //TODO : Error checking
@@ -371,6 +390,14 @@ function shellCreate(args)
     var data = args.slice(1,args.length).join("");
 
     krnCreateFile(name,data);
+}
+
+function shellDelete(args)
+{   
+    //TODO : Error checking
+    var name = args[0];
+
+    krnDeleteFile(name);
 }
 
 function shellDate(args)

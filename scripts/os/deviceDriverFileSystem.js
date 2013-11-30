@@ -159,6 +159,36 @@ function krnFSFormat()
     }
 }
 
+function krnListFiles()
+{
+    var files = '';
+    var t = TRACKS.DIRECTORY_DATA
+
+    for (var s = 0; s < NUM_SECTORS; s++){
+        for (var b = 0; b < NUM_BLOCKS; b++){
+
+            // Generate TSB for function
+            var tsb = generateTSB(t,s,b);
+            var data = disk.read(tsb);
+
+            // Get value hash
+            data = decodeDiskData(data);
+
+            // Get value by shaving off null characters (dashes)
+            var value = data['data'].toString();
+            value = value.slice(0, value.indexOf("-"));
+
+            if (value != ''){
+                files += value + ' '
+            }
+        }
+    }
+
+    return files;
+
+
+}
+
 // create <name> <data>
 function krnCreateFile(name, data)
 {
@@ -174,17 +204,22 @@ function krnCreateFile(name, data)
 }
 
 // delete <name>
-function krnDeleteFile(name)
+function krnDeleteFile(fileName)
 {
 
-    var tsb = findFile();
+    var tsb = findFile(fileName);
+
+    if (tsb){
+        krnRemoveFileData(tsb);
+        krnRemoveFileDirectory(tsb);
+    }
 
     // Remove from directory stack
 
 }
 
-function findFile(name){
-
+function findFile(fileName)
+{
     var t = TRACKS.DIRECTORY_DATA
 
     for (var s = 0; s < NUM_SECTORS; s++){
@@ -197,7 +232,13 @@ function findFile(name){
             // Get value hash
             data = decodeDiskData(data);
 
-            console.log(data['data']);
+            // Get value by shaving off null characters (dashes)
+            var value = data['data'].toString();
+            value = value.slice(0, value.indexOf("-"));
+
+            if (value == fileName){
+                return tsb;
+            }
         }
     }
 }
