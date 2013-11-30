@@ -187,22 +187,25 @@ function krnListFiles()
 
 // create <name> <data>
 function krnCreateFile(name, data)
-{
+{   
+    if (findFile(name)){
+        return "Failed to create file. File already exists."
+    }
     // Directory data must fit on one block!
     if (name.length > 60){
-        return "File name must be less than 60 characters";
+        return "Failed to create file. File name must be less than 60 characters";
     }
 
     var freeFileBlocks = findFreeFileBlocks(data);
 
     if (!freeFileBlocks){
-        return "Ran out of free file space";
+        return "Failed to create file. Ran out of free file space";
     }
 
     var freeDirectoryBlock = findFreeDirectoryBlock();
 
     if (!freeDirectoryBlock){
-        return "Ran out of free directory space";
+        return "Failed to create file. Ran out of free directory space";
     }
 
     var firstFreeFileBlock = freeFileBlocks[0];
@@ -215,17 +218,29 @@ function krnCreateFile(name, data)
 }
 
 function krnReadFile(fileName)
-{
+{   
+    // Get directory location of file
     var tsb = findFile(fileName);
 
     if (tsb) {
 
-        // Get file values  
-        data = disk.read(tsb);
-        data = decodeDiskData(data);
+        // Holds value of file over multiple blocks
+        var value = '';
 
-        var value = data['data'].toString();
-        value = value.slice(0, value.indexOf("-"));
+        // Get location of actual file from directory values
+        tsb = getFileTSB(tsb);
+
+        do{
+            var data = disk.read(tsb);
+            data = decodeDiskData(data);
+
+            var blockValue = data['data'].toString();
+            value += blockValue.slice(0, blockValue.indexOf("-"));
+
+            // Get location of next block in chain
+            tsb = getNextTSB(data);
+
+        }while(tsb != '---');
 
         return value;
     }
@@ -280,7 +295,6 @@ function findFile(fileName)
                 value = value.slice(0, value.indexOf("-"));
 
                 if (value == fileName){
-                    tsb = generateTSB(data['track'], data['sector'], data['block']);
                     return tsb;
                 }
             }
@@ -308,6 +322,7 @@ function krnWriteFileData(blocks, data)
     }
 }
 
+// used for deleting files
 function krnRemoveFileData(tsb)
 {   
     do {
@@ -376,7 +391,7 @@ function findFreeFileBlocks(fileData)
         return blocks.slice(0,numBlocks);
     }
 }
-
+    
 function findFreeDirectoryBlock()
 {
 
@@ -398,4 +413,18 @@ function findFreeDirectoryBlock()
             }
         }
     }
+}
+
+function getNextTSB(data)
+{
+    return generateTSB(data['track'], data['sector'], data['block']);
+}
+
+function getFileTSB(tsb)
+{
+    var data = disk.read(tsb);
+    data = decodeDiskData(data);
+    tsb = getNextTSB(data);
+
+    return tsb;
 }
