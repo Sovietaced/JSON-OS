@@ -19,7 +19,7 @@ var NUM_BLOCKS = 8;
 var BLOCK_SIZE = 64;
 
 var TRACKS = {
-     DIRECTORY_DATA : 1,
+     DIRECTORY_DATA : 0,
      FILE_DATA : [1,2,3]
 }
 
@@ -163,24 +163,43 @@ function krnFSFormat()
 function krnCreateFile(name, data)
 {
 
-    var freeBlock = findFreeBlock();
+    var freeFileBlock = findFreeFileBlock();
+    var freeDirectoryBlock = findFreeDirectoryBlock();
 
-    var top = directory.peek();
+    krnWriteFileDirectory(freeDirectoryBlock, freeFileBlock, name);
+    krnWriteFileData(freeFileBlock, data);
 
-    if (top){
-        var directoryTSB = incrementTSB(top.data);
-        krnWriteFileDirectory(directoryTSB, freeBlock, name);
-        krnWriteFileData(freeBlock, data);
-        directory.push(directoryTSB);
-        console.log(directory.peek().data);
+    console.log(freeDirectoryBlock);
+    console.log(freeFileBlock);
+}
+
+// delete <name>
+function krnDeleteFile(name)
+{
+
+    var tsb = findFile();
+
+    // Remove from directory stack
+
+}
+
+function findFile(name){
+
+    var t = TRACKS.DIRECTORY_DATA
+
+    for (var s = 0; s < NUM_SECTORS; s++){
+        for (var b = 0; b < NUM_BLOCKS; b++){
+
+            // Generate TSB for function
+            var tsb = generateTSB(t,s,b);
+            var data = disk.read(tsb);
+
+            // Get value hash
+            data = decodeDiskData(data);
+
+            console.log(data['data']);
+        }
     }
-    else{
-        krnWriteFileDirectory(DIRECTORY_TSB, freeBlock, name);
-        krnWriteFileData(freeBlock, data);
-        directory.push(DIRECTORY_TSB);
-    }
-
-
 }
 
 function krnWriteFileData(tsb, data)
@@ -223,7 +242,7 @@ function krnRemoveFileDirectory(directoryTSB)
     disk.write(directoryTSB, data);
 }
 
-function findFreeBlock()
+function findFreeFileBlock()
 {
     for (var t = 0; t < TRACKS.FILE_DATA.length; t++){
         var track = TRACKS.FILE_DATA[t];
@@ -241,6 +260,29 @@ function findFreeBlock()
                 if (data['activity'] == '0'){
                     return tsb;
                 }
+            }
+        }
+    }
+}
+
+function findFreeDirectoryBlock()
+{
+
+    var t = TRACKS.DIRECTORY_DATA
+
+    for (var s = 0; s < NUM_SECTORS; s++){
+        for (var b = 0; b < NUM_BLOCKS; b++){
+
+            // Generate TSB for function
+            var tsb = generateTSB(t,s,b);
+            var data = disk.read(tsb);
+
+            // Get value hash
+            data = decodeDiskData(data);
+
+            // Check for non active
+            if (data['activity'] == '0'){
+                return tsb;
             }
         }
     }
