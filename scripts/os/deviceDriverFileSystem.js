@@ -290,7 +290,7 @@ function findFile(fileName)
 
 function krnWriteFileData(blocks, data)
 {   
-    // This splits the data into an array of strings, each string with a max size of 60
+    // This splits the data into an array of strings, each string with a max size of 60. regex magic...
     var dataBlocks = data.match(/.{1,60}/g);
 
     for (var i = 0; i < dataBlocks.length; i++){
@@ -299,23 +299,32 @@ function krnWriteFileData(blocks, data)
         if (i+1 < dataBlocks.length){
             var data = generateDiskData(1, blocks[i+1], dataBlocks[i]);
         }
+        // Must have hit the end of the file, no chaining here 
         else{
             var data = generateDiskData(1, generateTSB('-', '-', '-'), dataBlocks[i]);
         }
-        // Write file to file TSB
+        // Write data to block
         disk.write(blocks[i], data);
     }
 }
 
 function krnRemoveFileData(tsb)
 {   
-    //TODO : HANDLE SIZE LARGER THAN 60
+    do {
+        // Grab the data before we overwrite it
+        var oldData = disk.read(tsb);
 
-    // active | TSB of file | file name
-    var data = generateDiskData(0, generateTSB('-', '-', '-'), '');
+        // active | TSB of file | file name
+        var cleanData = generateDiskData(0, generateTSB('-', '-', '-'), '');
 
-    // Write file to file TSB
-    disk.write(tsb, data);
+        // Write file to file TSB
+        disk.write(tsb, cleanData);
+
+        // Set the TSB to the TSB described by the chain
+        oldData = decodeDiskData(oldData);
+        tsb = generateTSB(oldData['track'],oldData['sector'], oldData['block']);
+
+    } while(tsb != '---');
 }
 
 function krnWriteFileDirectory(directoryTSB, fileTSB, name)
