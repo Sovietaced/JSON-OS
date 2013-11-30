@@ -174,12 +174,15 @@ function krnListFiles()
             // Get value hash
             data = decodeDiskData(data);
 
-            // Get value by shaving off null characters (dashes)
-            var value = data['data'].toString();
-            value = value.slice(0, value.indexOf("-"));
+            // Check for active
+            if (data['activity'] == '1'){
+                // Get value by shaving off null characters (dashes)
+                var value = data['data'].toString();
+                value = value.slice(0, value.indexOf("-"));
 
-            if (value != ''){
-                files += value + ' '
+                if (value != ''){
+                    files += value + ' '
+                }
             }
         }
     }
@@ -232,12 +235,15 @@ function findFile(fileName)
             // Get value hash
             data = decodeDiskData(data);
 
-            // Get value by shaving off null characters (dashes)
-            var value = data['data'].toString();
-            value = value.slice(0, value.indexOf("-"));
+            // Check for non active
+            if (data['activity'] == '1'){
+                // Get value by shaving off null characters (dashes)
+                var value = data['data'].toString();
+                value = value.slice(0, value.indexOf("-"));
 
-            if (value == fileName){
-                return tsb;
+                if (value == fileName){
+                    return tsb;
+                }
             }
         }
     }
