@@ -17,6 +17,7 @@ var NUM_SECTORS = 8;
 var NUM_BLOCKS = 8;
 
 var BLOCK_SIZE = 64;
+var BLOCK_DATA_SIZE = 60;
 
 var TRACKS = {
      DIRECTORY_DATA : 0,
@@ -51,9 +52,6 @@ function krnFSDriverEntry()
     disk = _HDD;                                // Assign Hardawre to driver
     krnFSFormat();                              // Format the disk
     this.status = "loaded";
-
-    disk.debug();
-    // More?
 }
 
 // For getting a TSB string
@@ -63,6 +61,7 @@ function generateTSB(t,s,b)
    return t.toString() + s.toString() + b.toString();
 }
 
+// Increments the TSB value, self explanatory
 function incrementTSB(tsb)
 {   
     var values = tsb.split("");
@@ -104,6 +103,7 @@ function decodeDiskData(dataa)
 {   
     // Convert data to hex byte array
     dataa = dataa.split(',')
+
     // Convert from Hex to String value
     for (var key in dataa){
         dataa[key] = String.fromCharCode(hexToInt(dataa[key]));
@@ -134,9 +134,6 @@ function krnFSDispatchDiskRequest(params)
 
 function krnFSFormat()
 {   
-    // Format the directory
-    directory = new Stack();
-
     // Format the disk
     for (var t =0; t < NUM_TRACKS; t++){
         for (var s = 0; s < NUM_SECTORS; s++){
@@ -147,13 +144,12 @@ function krnFSFormat()
                 var data = generateDiskData(0, generateTSB('-', '-', '-'), "");
 
                 // Generate MBR code
-                if (tsb === MBR_TSB){
-                    data = generateDiskData(1, generateTSB('-', '-', '-'), "MBR");
-                }
+                //if (tsb === MBR_TSB){
+                    //data = generateDiskData(1, generateTSB('-', '-', '-'), "MBR");
+                //}
 
                 // Write data to disk
                 disk.write(tsb,data);
-
             }
         }
     }
@@ -192,15 +188,30 @@ function krnListFiles()
 // create <name> <data>
 function krnCreateFile(name, data)
 {
+    // Directory data must fit on one block!
+    if (name.length > 60){
+        return "File name must be less than 60 characters";
+    }
 
-    var freeFileBlock = findFreeFileBlock();
+    var freeFileBlocks = findFreeFileBlocks(data);
+
+    if (!freeFileBlocks){
+        return "Ran out of free file space";
+    }
+
     var freeDirectoryBlock = findFreeDirectoryBlock();
 
-    krnWriteFileDirectory(freeDirectoryBlock, freeFileBlock, name);
-    krnWriteFileData(freeFileBlock, data);
+    if (!freeDirectoryBlock){
+        return "Ran out of free directory space";
+    }
 
-    console.log(freeDirectoryBlock);
-    console.log(freeFileBlock);
+    var firstFreeFileBlock = freeFileBlocks[0];
+
+    krnWriteFileDirectory(freeDirectoryBlock, firstFreeFileBlock, name);
+    krnWriteFileData(freeFileBlocks, data);
+
+    // Notify successful
+    return true;
 }
 
 function krnReadFile(fileName)
@@ -209,11 +220,6 @@ function krnReadFile(fileName)
 
     if (tsb) {
 
-        // Get TSB of file from directory data
-        var data = disk.read(tsb);
-        data = decodeDiskData(data);
-        tsb = generateTSB(data['track'], data['sector'], data['block']);
-        
         // Get file values  
         data = disk.read(tsb);
         data = decodeDiskData(data);
@@ -222,6 +228,19 @@ function krnReadFile(fileName)
         value = value.slice(0, value.indexOf("-"));
 
         return value;
+    }
+}
+
+function krnWriteFile(fileName, data)
+{
+    var tsb = findFile(fileName);
+
+    if (tsb){
+        krnRemoveFileData(tsb);
+        krnRemoveFileDirectory(tsb);
+    }
+    else{
+        return "File not found";
     }
 }
 
@@ -261,6 +280,7 @@ function findFile(fileName)
                 value = value.slice(0, value.indexOf("-"));
 
                 if (value == fileName){
+                    tsb = generateTSB(data['track'], data['sector'], data['block']);
                     return tsb;
                 }
             }
@@ -268,15 +288,23 @@ function findFile(fileName)
     }
 }
 
-function krnWriteFileData(tsb, data)
+function krnWriteFileData(blocks, data)
 {   
-    //TODO : HANDLE SIZE LARGER THAN 60
+    // This splits the data into an array of strings, each string with a max size of 60
+    var dataBlocks = data.match(/.{1,60}/g);
 
-    // active | TSB of file | file name
-    var data = generateDiskData(1, generateTSB('-', '-', '-'), data);
-
-    // Write file to file TSB
-    disk.write(tsb, data);
+    for (var i = 0; i < dataBlocks.length; i++){
+        
+        // As long as we are not at the end of the data, we need to write linking TSB (next block)
+        if (i+1 < dataBlocks.length){
+            var data = generateDiskData(1, blocks[i+1], dataBlocks[i]);
+        }
+        else{
+            var data = generateDiskData(1, generateTSB('-', '-', '-'), dataBlocks[i]);
+        }
+        // Write file to file TSB
+        disk.write(blocks[i], data);
+    }
 }
 
 function krnRemoveFileData(tsb)
@@ -308,8 +336,12 @@ function krnRemoveFileDirectory(directoryTSB)
     disk.write(directoryTSB, data);
 }
 
-function findFreeFileBlock()
-{
+function findFreeFileBlocks(fileData)
+{   
+    // Get the number of blocks needed and round up
+    var numBlocks = Math.ceil(fileData.length / BLOCK_DATA_SIZE);
+    var blocks = [];
+
     for (var t = 0; t < TRACKS.FILE_DATA.length; t++){
         var track = TRACKS.FILE_DATA[t];
         for (var s = 0; s < NUM_SECTORS; s++){
@@ -324,10 +356,15 @@ function findFreeFileBlock()
 
                 // Check for non active
                 if (data['activity'] == '0'){
-                    return tsb;
+                    blocks.push(tsb);
                 }
             }
         }
+    }
+    // Check to see if we've found enough free blocks
+    if (blocks.length > numBlocks){
+        // Return only the amount of blocks needed
+        return blocks.slice(0,numBlocks);
     }
 }
 

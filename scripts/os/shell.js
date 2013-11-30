@@ -47,6 +47,13 @@ function shellInit() {
     sc.function = shellRead     ;
     this.commandList[this.commandList.length] = sc;
 
+    // write
+    sc = new ShellCommand();
+    sc.command = "write";
+    sc.description = "<filename> <string> - Writes specified string to the specified file";
+    sc.function = shellRead     ;
+    this.commandList[this.commandList.length] = sc;
+
      // create
     sc = new ShellCommand();
     sc.command = "create";
@@ -396,13 +403,46 @@ function shellRead(args)
     _StdIn.putText(krnReadFile(name));
 }
 
+function shellWrite(args)
+{   
+    if (args.length > 0){
+
+        var name = args[0];
+        var data = args.slice(1,args.length).join(" ");
+        var result = krnWriteFile(name,data);
+
+        if (result == true){
+            _StdIn.putText("Data written to file " + name + ".");
+        }
+        else{
+            _StdIn.putText(result);
+        }
+
+    }
+    else{
+        _StdIn.putText("Missing file name argument!");
+    }
+}
+
 function shellCreate(args)
 {   
-    //TODO : Error checking
-    var name = args[0];
-    var data = args.slice(1,args.length).join(" ");
+    if (args.length > 0){
 
-    krnCreateFile(name,data);
+        var name = args[0];
+        var data = args.slice(1,args.length).join(" ");
+        var result = krnCreateFile(name,data);
+
+        if (result == true){
+            _StdIn.putText("File " + name + " created.");
+        }
+        else{
+            _StdIn.putText(result);
+        }
+
+    }
+    else{
+        _StdIn.putText("Missing file name argument!");
+    }
 }
 
 function shellDelete(args)
