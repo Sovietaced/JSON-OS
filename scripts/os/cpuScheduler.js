@@ -11,6 +11,8 @@ function CpuScheduler() {
   this.clock = 0;
   this.readyQueue = new Queue();
   this.mode = null;
+  this.SCHEDULING_ALGORITHMS = ['RR', 'FCFS', 'PRIORITY'];
+  this.currentAlgorithm = 'RR';       // Default to round robin
 
     this.init = function(){
       this.quantum = 6;     // Quantum value in clock ticks
@@ -29,7 +31,7 @@ function CpuScheduler() {
       if(this.readyQueue.getSize() > 0){
         this.readyQueue.peek().loadState();
       }
-    }
+    };
 
     this.schedule = function(pcb){
 
@@ -46,13 +48,19 @@ function CpuScheduler() {
 
     this.run = function(){
         if (this.readyQueue.getSize() > 0){
-          // Switch processes if we've reached the quantum value, increment clock ticks counter
-          if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
-            _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
-          }
-          else{
-            // Capture state for live updates for every clock tick
-            this.readyQueue.peek().captureState();
+
+          // Determine the current scheduling algorithm and let it handle the scheduling
+          switch (this.currentAlgorithm)
+          {
+            case 'RR':
+              this.RR();
+              break;
+            case 'FCFS':
+              this.FCFS();
+              break;
+            case 'PRIORITY':
+              this.PRIORITY();
+              break;
           }
         }
         else{
@@ -62,6 +70,29 @@ function CpuScheduler() {
           this.mode = 0;
          _CPU.isExecuting = false;
         }
+    };
+
+    // Round robin, switch every n clock ticks (quantum)
+    this.RR = function(){
+
+      console.log("yay");
+      if(++this.clock % this.quantum === 0 && this.readyQueue.getSize() > 1){
+        _KernelInterruptQueue.enqueue(new Interrupt(SCHEDULER_IRQ, new Array("switch"))); 
+      }
+      else{
+        // Capture state for live updates for every clock tick
+        this.readyQueue.peek().captureState();
+      }
+    };
+
+    // First come first serve, essentially do nothing
+    this.FCFS = function(){
+      // Capture state for live updates for every clock tick
+      this.readyQueue.peek().captureState();
+    };
+
+    this.PRIORITY = function(){
+      console.log("Priority");
     };
 
     // Load next in round robin 

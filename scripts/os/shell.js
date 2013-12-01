@@ -105,7 +105,7 @@ function shellInit() {
 
     // getSchedule
     sc = new ShellCommand();
-    sc.command = "getSchedule";
+    sc.command = "getschedule";
     sc.description = "- Returns the current process scheduling algorithm";
     sc.function = shellGetSchedule;
     this.commandList[this.commandList.length] = sc;

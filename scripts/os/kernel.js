@@ -255,6 +255,11 @@ function krnKill(pid)
   }
 };
 
+function krnGetSchedule()
+{
+  return _CpuScheduler.currentAlgorithm;
+};
+
 // Remove head process from scheduler
 function krnKillProcess()
 {
