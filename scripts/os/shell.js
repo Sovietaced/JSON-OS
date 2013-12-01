@@ -103,6 +103,13 @@ function shellInit() {
     sc.function = shellPs;
     this.commandList[this.commandList.length] = sc;
 
+    // getSchedule
+    sc = new ShellCommand();
+    sc.command = "getSchedule";
+    sc.description = "- Returns the current process scheduling algorithm";
+    sc.function = shellGetSchedule;
+    this.commandList[this.commandList.length] = sc;
+
     // run
     sc = new ShellCommand();
     sc.command = "run";
@@ -478,6 +485,11 @@ function shellPs()
         _StdIn.putText(pids[i].toString());
         _StdIn.advanceLine();
     }
+}
+
+function shellGetSchedule()
+{   
+    _StdIn.putText(krnGetSchedule());
 }
 
 function shellRun(args)
