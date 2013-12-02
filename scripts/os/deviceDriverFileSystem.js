@@ -466,17 +466,3 @@ function getFileTSB(tsb)
 
     return tsb;
 }
-
-// Wrapper for creating files for PCBs
-function allocateVirtualMemory(program, pid){
-  
-  // Create the file
-  var fileName = "pid" + pid;
-  var result = krnCreateFile(fileName, program);
-
-  // Get the TSB of the file and return it
-  if (result){
-      var tsb = findFile(fileName);
-      return tsb;
-  }
-}

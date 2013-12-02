@@ -30,6 +30,11 @@ function CpuScheduler() {
     this.loadProcess = function(){
       if(this.readyQueue.getSize() > 0){
         console.log(this.readyQueue);
+        var pcbw = this.getRunningProcess();
+        // If we're loading a process in virtual memory swap!        
+        if(pcbw.tsb){
+          this.swap(pcbw);
+        }
        this.getRunningProcess().loadState();
       }
     };
@@ -42,10 +47,6 @@ function CpuScheduler() {
       if(this.readyQueue.getSize() === 1){
         this.loadProcess();
         _CPU.isExecuting = true;
-      }
-      // Hanle programs loaded into virtual memory
-      else if(pcbw.tsb != null){
-        this.swap(pcbw);
       }
 
       krnTrace("Process " + pcbw.pcb.getPid() + " scheduled.");
@@ -75,10 +76,6 @@ function CpuScheduler() {
           this.mode = 0;
          _CPU.isExecuting = false;
         }
-    };
-
-    this.swap = function(){
-
     };
 
     // Round robin, switch every n clock ticks (quantum)

@@ -42,6 +42,15 @@ function Queue()
         }
         return retVal;       
     }
+
+    this.tail = function() {
+        var retVal = null;
+        if (this.q.length > 0)
+        {
+            retVal = this.q[q.length-1];
+        }
+        return retVal;       
+    }
     
     this.toString = function() {
         var retVal = "";

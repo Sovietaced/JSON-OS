@@ -26,21 +26,24 @@ function MemoryManager() {
     this.allocate = function(program, pid){
 
       var partition = this.findFreePartition(pid); 
-      var memoryPosition = partition.low; // Used to iterate
 
-    	for(var i = 0; i < program.length; i+=2){
-    		// Try to write two hex values to each memory byte,
-	    	if(!_RAM.writeMemory(memoryPosition, program[i] + program[i+1])){
-          //TODO: Should probably throw an exception here
-	    	
-	    	}
-	    	else{
-          // Memory write successful, increment the memory position (PC)
-          this.updateDisplay();
-          memoryPosition++;
-	    	}
-		  }
-      return partition;
+      if (partition){
+        var memoryPosition = partition.low; // Used to iterate
+
+      	for(var i = 0; i < program.length; i+=2){
+      		// Try to write two hex values to each memory byte,
+  	    	if(!_RAM.writeMemory(memoryPosition, program[i] + program[i+1])){
+            //TODO: Should probably throw an exception here
+  	    	
+  	    	}
+  	    	else{
+            // Memory write successful, increment the memory position (PC)
+            this.updateDisplay();
+            memoryPosition++;
+  	    	}
+  		  }
+        return partition;
+      }
     };
 
   // Finds a free partition for a new process
@@ -56,6 +59,29 @@ function MemoryManager() {
     }
 
   };
+
+  // Wrapper for creating files for PCBs
+this.allocateVirtualMemory = function(program, pid){
+  
+  // Create the file
+  var fileName = "pid" + pid;
+  var result = krnCreateFile(fileName, program);
+
+  // Get the TSB of the file and return it
+  if (result){
+      var tsb = findFile(fileName);
+      return tsb;
+  }
+};
+
+  // Wrapper for creating files for PCBs
+this.readVirtualMemory = function(pid){
+  
+  // Create the file
+  var fileName = "pid" + pid;
+
+  return krnReadFile(fileName);
+};
 
   // Self explanatory
   this.clearMemory = function(base, offset){
@@ -159,4 +185,6 @@ function MemoryManager() {
          $('#memory').append('<tr>' + data + '</tr>');
       }
   }; 
+
+
 }

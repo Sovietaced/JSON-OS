@@ -222,7 +222,7 @@ function krnCreateProcess(program)
     }
     // Virtual Memory
     else{
-        var tsb = allocateVirtualMemory(program, process.getPid());
+        var tsb = _memoryManager.allocateVirtualMemory(program, process.getPid());
 
         if (tsb){
           // Initialize the wrapper and let it know that the process is being held in virtual memory
