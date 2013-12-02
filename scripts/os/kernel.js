@@ -206,40 +206,46 @@ function krnSwitch()
 
 // Handles everything for creating a process
 function krnCreateProcess(program)
-{
+{    
+    var pcbw = new PCBWrapper();
+    var process = new PCB();
+    process.init(getNextPID());
+
     // Attempt to allocate memory for program
-    var partition = _memoryManager.allocate(program);
+    var partition = _memoryManager.allocate(program, process.getPid());
 
+    // Physical Memory
     if (partition){
-
-      // PCB creation
-      process = new PCB();    
-      process.init(getNextPID(), partition.low, RAM_SIZE/PARTITIONS); // Create process by passing in ID
-      
-      // Set the partition to active
-      partition.pid = process.getPid();
-
-      // Add process to process list
-      _Processes.push(process);
-
-      return process.getPid();
+      process.setMemoryBounds(partition.low, RAM_SIZE/PARTITIONS); // Create process by passing in ID
+      // Initialize the wrapper and write a null TSB because it's not loaded into the hdd
+      pcbw.init(process.getPid(), null);
     }
+    // Virtual Memory
     else{
-      return false;
+        var tsb = allocateVirtualMemory(program, process.getPid());
+
+        if (tsb){
+          // Initialize the wrapper and let it know that the process is being held in virtual memory
+          pcbw.init(process.getPid(), tsb);
+        }
     }
+
+    // Add process to process list
+    _Processes.push(process);
+    return process.getPid();
 };
 
 // For command line, assuming user isn't running this command while executing
 function krnKill(pid)
 {
 
-  // Get the process
+  // Get the process wrapper
   var process = krnFindProcess(pid);
 
   if (process){
 
     // Do memory cleanup
-    process.kill();
+    process.pcb.kill();
 
     // Remove process from resident list
     var index = _Processes.indexOf(process);
@@ -284,17 +290,17 @@ function krnKillProcess()
 
 };
 
-// Runs a process given the process
-function krnRunProcess(pcb)
-{
-  _CpuScheduler.schedule(pcb);
+// Schedules the process wrapper
+function krnRunProcess(pcbw)
+{ 
+  _CpuScheduler.schedule(pcbw);
 };
 
 // Returns a process given a process ID
 function krnFindProcess(pid)
 {
   for (var i = 0; i < _Processes.length; i++ ){
-        if (_Processes[i].getPid() == parseInt(pid)){
+        if (_Processes[i].pcb.getPid() == parseInt(pid)){
             return _Processes[i];
         }
     }
@@ -306,7 +312,7 @@ function krnGetProcessPids()
 {
   var pids = [];
   for (var i = 0; i < _Processes.length; i++ ){
-      pids.push(_Processes[i].getPid());
+      pids.push(_Processes[i].pcb.getPid());
   }
   return pids;
 };

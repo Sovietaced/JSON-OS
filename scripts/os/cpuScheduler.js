@@ -18,29 +18,34 @@ function CpuScheduler() {
       this.quantum = 6;     // Quantum value in clock ticks
       this.clock = 0;       // Clock ticks to evaluate when switching is necessary
       this.readyQueue = new Queue();
-      this.mode = 1;        // user mode
+      this.mode = 1;        // user thmode
     };
 
     // Returns the head of the PCB
     this.getRunningProcess = function(){
-      return this.readyQueue.peek();
+      return this.readyQueue.peek().pcb;
     };
 
     // Loads the state of the head PCB after switching
     this.loadProcess = function(){
       if(this.readyQueue.getSize() > 0){
-        this.readyQueue.peek().loadState();
+        console.log(this.readyQueue);
+       this.getRunningProcess().loadState();
       }
     };
 
-    this.schedule = function(pcb){
+    this.schedule = function(pcbw){
 
-      this.readyQueue.enqueue(pcb);
+      this.readyQueue.enqueue(pcbw);
 
       // If this is the first process set it up so it can begin executing
       if(this.readyQueue.getSize() === 1){
         this.loadProcess();
         _CPU.isExecuting = true;
+      }
+      // Hanle programs loaded into virtual memory
+      else if(pcbw.tsb != null){
+        this.swap(pcbw);
       }
 
       krnTrace("Process " + pcb.getPid() + " scheduled.");
@@ -79,14 +84,14 @@ function CpuScheduler() {
       }
       else{
         // Capture state for live updates for every clock tick
-        this.readyQueue.peek().captureState();
+        this.getRunningProcess().captureState();
       }
     };
 
     // First come first serve, essentially do nothing
     this.FCFS = function(){
       // Capture state for live updates for every clock tick
-      this.readyQueue.peek().captureState();
+      this.getRunningProcess().captureState();
     };
 
     this.PRIORITY = function(){
@@ -97,18 +102,18 @@ function CpuScheduler() {
     this.rotate = function(){
 
       // Remove the head
-      var pcb = this.readyQueue.dequeue();
+      var pcbw = this.readyQueue.dequeue();
 
       // Capture the CPU state
-      pcb.captureState();
+      pcbw.pcb.captureState();
 
       // Add the head to the tail
-      this.readyQueue.enqueue(pcb);
+      this.readyQueue.enqueue(pcbw);
 
       // Load state of new head
       this.loadProcess();
 
-      krnTrace("Scheduler has switched from rocess " + pcb.getPid() + " to process " + this.readyQueue.peek().getPid() + ".");
+      krnTrace("Scheduler has switched from process " + pcbw.pcb.getPid() + " to process " + this.getRunningProcess().getPid() + ".");
 
     };
 
@@ -132,7 +137,7 @@ function CpuScheduler() {
 
       var pcbData = [];
       for(var i = 0; i < this.readyQueue.getSize(); i++){
-        pcbData.push(this.readyQueue.q[i].toArray());
+        pcbData.push(this.readyQueue.q[i].pcb.toArray());
       }
 
        // Remove table body rows
@@ -154,3 +159,4 @@ function CpuScheduler() {
     };
 
 }
+

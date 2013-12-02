@@ -23,9 +23,9 @@ function MemoryManager() {
     };
 
     // Allocates instructions to bytes in memory
-    this.allocate = function(program){
+    this.allocate = function(program, pid){
 
-      var partition = this.findFreePartition(); // Used to return
+      var partition = this.findFreePartition(pid); 
       var memoryPosition = partition.low; // Used to iterate
 
     	for(var i = 0; i < program.length; i+=2){
@@ -44,11 +44,13 @@ function MemoryManager() {
     };
 
   // Finds a free partition for a new process
-  this.findFreePartition = function(){
+  this.findFreePartition = function(pid){
 
     // Loop through the partitions and find one without a PID assigned
     for (i in this.partitions){
       if(this.partitions[i].pid === null){
+        // Mark this partition as taken by the PID
+        this.partitions[i].pid = pid;
         return this.partitions[i];
       }
     }
@@ -63,6 +65,21 @@ function MemoryManager() {
     }
 
     this.updateDisplay();
+  }
+
+  // Self explanatory
+  this.clearPartition = function(pid){
+    console.log(this.partitions);
+     // Loop through the partitions and find one with the PID assigned
+    for (i in this.partitions){
+      var partition = this.partitions[i];
+      if(partition.pid === pid){
+        this.clearMemory(partition.low, partition.high);
+        this.partitions[i].pid = null;
+      }
+    }
+
+    console.log(this.partitions);
   }
 
   // Nice help that does base conversions
@@ -101,8 +118,6 @@ function MemoryManager() {
       _RAM.writeMemory(PC, value.toString(16));
     }
   };
-
-
   
   // Validates memory requests for errors
   this.validate = function(PC){
