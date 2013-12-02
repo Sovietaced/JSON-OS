@@ -82,8 +82,6 @@ this.readVirtualMemory = function(pid){
   
   // Create the file
   var fileName = "pid" + pid;
-  console.log("readVirtualMemory");
-  console.log(krnReadFile(fileName));
   return krnReadFile(fileName);
 };
 
@@ -91,21 +89,13 @@ this.swap = function(pcbwToMem){
 
   // Get the memory values before we overwrite them
   var toHDDpid = this.getRandomPartition();
-  console.log("rANDOM PARTITION");
-  console.log(toHDDpid);
   var program = this.readPartition(toHDDpid);
-  console.log(program);
 
-  console.log("boutta clear");
   // Make this partition available for values from HDD
   this.clearPartition(toHDDpid);
 
-  console.log("cleared");
-
   // Write the program we're going to replace to disk
   var tsb = this.allocateVirtualMemory(program, toHDDpid);
-
-  console.log("allocated");
   // TODO : HANDLE POSSIBLE ERRORS HERE
 
   // Give file location to process wrapper, signifying that it is on disk
@@ -118,12 +108,13 @@ this.swap = function(pcbwToMem){
   // Write memory values to memory
   var partition = this.allocate(program, toMempid);
   pcbwToMem.pcb.setMemoryBounds(partition.low, RAM_SIZE/NUM_PARTITIONS);
+
   // Set TSB to null snce we are no longer relying on HDD
   pcbwToMem.setTSB(null);
   //TODO : HANDLE POSSIBLE ERRORS HERE
 
-  console.log("result");
-  console.log(partition);
+  // Return the updated process blocks
+  return [pcbwToMem, pcbwToHDD]
 
 };
 
@@ -144,7 +135,7 @@ this.swap = function(pcbwToMem){
     // Get partition where pid is assigned
     var index = this.findPartitionIndex(pid);
 
-    if (index){
+    if (index != null){
       var partition = this.partitions[index];
       this.clearMemory(partition.low, partition.high);
       this.partitions[index].pid = null;
@@ -155,11 +146,12 @@ this.swap = function(pcbwToMem){
 
   // Helper for swapping
   this.readPartition = function(pid){
-
+    console.log("we in read partition");
     var index = this.findPartitionIndex(pid);
+    console.log(index);
 
-    if (index){
-
+    if (index != null){
+      console.log("we in the conditional");
       var partition = this.partitions[index];
       var values = '';
 
@@ -190,9 +182,14 @@ this.swap = function(pcbwToMem){
   }
 
   this.findPartitionIndex = function(pid){
+    console.log(pid);
+    console.log("we in find partition index");
     for (var i = 0; i < NUM_PARTITIONS; i++){
+      console.log("we in the loop");
       var partition = this.partitions[i];
+      console.log(partition);
       if(partition.pid === pid){
+        console.log("we returning");
         return i;
       }
     }
@@ -249,7 +246,7 @@ this.swap = function(pcbwToMem){
       }
       else {
         console.log("memz outta boundz");
-        console.log(_CPU.PC);
+        console.log(_CPU.PC.toString(16));
         console.log(PC);
          krnTrace("Memory out of bounds exception. Killing the process.");
         _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_OUT_OF_BOUNDS_IRQ)); 

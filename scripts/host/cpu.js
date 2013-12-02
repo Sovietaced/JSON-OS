@@ -50,6 +50,10 @@
         instructionData = OP_CODES[instruction];
         // Determine the arguments based on the instruction's expected arguments
         arguments = this.readArguments(instructionData.argsLen);
+
+        console.log("PC : " + this.PC);
+        console.log("arguments : " + arguments);
+
         // Execute the instruction
         instructionData.funct(arguments);
         return true;
@@ -161,9 +165,9 @@ function noOp(){
   if( _CPU.Zflag == 0){
       // Increment PC number of positions
       _CPU.PC += hexToInt(position);
-       if (_CPU.PC >= _CpuScheduler.getRunningProcess().getBase() + _CpuScheduler.getRunningProcess().getOffset()) {
+       if (_CPU.PC >= _CpuScheduler.getRunningProcess().pcb.getBase() + _CpuScheduler.getRunningProcess().pcb.getOffset()) {
            // Memory out of bounds, loop around the boundary
-           _CPU.PC -=  _CpuScheduler.getRunningProcess().getOffset();
+           _CPU.PC -=  _CpuScheduler.getRunningProcess().pcb.getOffset();
         }
       }
     }

@@ -29,6 +29,17 @@ function CpuScheduler() {
       }
     };
 
+    // This updates the ready queue when the memory manager changes the state of the process wrappers
+    this.updateReadyQueue = function(pcbws){
+      for(var i = 0; i < this.readyQueue.getSize(); i++){
+        for (var j = 0; j < pcbws.length; j++){
+          if(pcbws[j].pcb.getPid() == this.readyQueue.q[i].pcb.getPid()){
+            this.readyQueue.q[i] = pcbws[j];
+          }
+        }
+      }
+    };
+
     // Loads the state of the head PCB after switching
     this.loadProcess = function(){
       if(this.readyQueue.getSize() > 0){
@@ -38,7 +49,10 @@ function CpuScheduler() {
         // If we're loading a process in virtual memory swap!        
         if(pcbw.tsb){
           console.log("we swappin");
-          _memoryManager.swap(pcbw);
+          // Swap 
+          var updatedPCBWs = _memoryManager.swap(pcbw);
+          // Update our copy of the process wrappers with the updated ones
+          this.updateReadyQueue(updatedPCBWs);
         }
         console.log("finished swappin");
         console.log(this.getRunningProcess().pcb);
@@ -49,13 +63,14 @@ function CpuScheduler() {
     };
 
     this.schedule = function(pcbw){
+      console.log("enqueue");
+      console.log(pcbw);
       this.readyQueue.enqueue(pcbw);
 
       // If this is the first process set it up so it can begin executing
       if(this.readyQueue.getSize() === 1){
         console.log("we loadinnnn");
         this.loadProcess();
-        console.log(_CPU.PC);
         _CPU.isExecuting = true;
       }
 

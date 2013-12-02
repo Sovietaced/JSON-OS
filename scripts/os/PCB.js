@@ -78,17 +78,6 @@
     };
 
     this.toArray = function(){
-      return new Array(this.pid, this.getAbsolutePC, this.base, this.offset, this.Acc, this.Xreg, this.Yreg, this.Zflag);
+      return new Array(this.pid, this.getAbsolutePC(), this.base, this.offset, this.Acc, this.Xreg, this.Yreg, this.Zflag);
     };
   }
-
-  function PCBWrapper() {
-
-  pcb = null;      // PCB
-  tsb = null;      // Denotes whether it is swapped to HDD
-
-  this.init = function(pcb,tsb){
-      this.pcb = pcb;     
-      this.tsb = tsb;
-    };
-}

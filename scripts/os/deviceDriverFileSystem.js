@@ -190,7 +190,8 @@ function krnListFiles()
 
 // create <name> <data>
 function krnCreateFile(name, data)
-{   
+{   console.log("dataaaa");
+    console.log(data);
     if (findFile(name)){
         return "Failed to create file. File already exists."
     }
@@ -238,7 +239,14 @@ function krnReadFile(fileName)
             data = decodeDiskData(data);
 
             var blockValue = data['data'].toString();
-            value += blockValue.slice(0, blockValue.indexOf("-"));
+
+            var end = blockValue.indexOf("-");
+            if (end != -1){
+                value += blockValue.slice(0, blockValue.indexOf("-"));
+            }
+            else{
+                value += blockValue;
+            }   
 
             // Get location of next block in chain
             tsb = getNextTSB(data);
@@ -394,8 +402,6 @@ function krnRemoveFileDirectory(directoryTSB)
 
 function findFreeFileBlocks(fileData)
 {   
-    console.log("FINDING FREE FILE BLOCKS");
-    console.log(fileData);
     // Get the number of blocks needed and round up
     var numBlocks = Math.ceil(fileData.length / BLOCK_DATA_SIZE);
 

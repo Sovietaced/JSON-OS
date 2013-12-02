@@ -544,10 +544,12 @@ function shellRun(args)
     // get value from html text area
     var pid = args[0];
     if (parseInt(pid) >= 0) {
-        var process = krnFindProcess(pid);
-        if (process){
+        var pcbw = krnFindProcess(pid);
+        if (pcbw){
+            console.log("WTF");
+            console.log(pcbw);
              _StdIn.putText("Running process with PID " + pid + "...");
-            var result = krnRunProcess(process);
+            var result = krnRunProcess(pid);
             return;
         }
         else{

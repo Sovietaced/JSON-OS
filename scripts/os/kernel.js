@@ -42,7 +42,7 @@ function krnBootstrap()      // Page 8.
    krnTrace(krnFSDriver.status);
 
    // Process related stoof
-   _Processes = new Array();            // Resident List
+   _Processes = {};            // Resident List
    _CpuScheduler = new CpuScheduler();
    _CpuScheduler.init();
    _nextPID = 0;                        // Counter for delegating PIDs
@@ -112,6 +112,7 @@ function krnOnCPUClockPulse()
     else                     // If there are no interrupts and there is nothing being executed then just be idle.
     {
        krnTrace("Idle");
+       console.log(JSON.stringify(_Processes));
     }
 }
 
@@ -213,7 +214,6 @@ function krnCreateProcess(program)
 
     // Attempt to allocate memory for program
     var partition = _memoryManager.allocate(program, process.getPid());
-    console.log(partition);
     // Physical Memory
     if (partition){
       process.setMemoryBounds(partition.low, RAM_SIZE/NUM_PARTITIONS); // Create process by passing in ID
@@ -223,17 +223,32 @@ function krnCreateProcess(program)
     // Virtual Memory
     else{
         var tsb = _memoryManager.allocateVirtualMemory(program, process.getPid());
-        console.log("ALLOCATING VIRTUAL MEMORY!");
-        console.log(_memoryManager.partitions);
         if (tsb){
           // Initialize the wrapper and let it know that the process is being held in virtual memory
           pcbw.init(process, tsb);
+          console.log(pcbw);
         }
     }
 
     // Add process wrapper to the process list
-    _Processes.push(pcbw);
+    addProcessToList(pcbw);
     return process.getPid();
+};
+
+function addProcessToList(pcbw){
+  var pid = pcbw.pcb.getPid();
+  _Processes[pid] = pcbw;
+};
+
+function updateProcessToList(pcbw){
+  var pid = pcbw.pcb.getPid();
+  _Processes[pid] = pcbw;
+};
+
+function deleteProcessFromList(pcbw){
+  var pid = pcbw.pcb.getPid();
+
+  delete _Processes[pid];
 };
 
 // For command line, assuming user isn't running this command while executing
@@ -248,12 +263,7 @@ function krnKill(pid)
     // Do memory cleanup
     process.pcb.kill();
 
-    // Remove process from resident list
-    var index = _Processes.indexOf(process);
-
-    if (index > -1) {
-        _Processes.splice(index, 1);
-    }
+    removeProcessFromList(process);
 
     return true;
   }
@@ -292,28 +302,32 @@ function krnKillProcess()
 };
 
 // Schedules the process wrapper
-function krnRunProcess(pcbw)
+function krnRunProcess(pid)
 { 
+  var pcbw = krnFindProcess(pid);
   _CpuScheduler.schedule(pcbw);
 };
 
 // Returns a process given a process ID
 function krnFindProcess(pid)
 {
-  for (var i = 0; i < _Processes.length; i++ ){
-        if (_Processes[i].pcb.getPid() == parseInt(pid)){
-            return _Processes[i];
+  for (var property in _Processes) {
+    if (_Processes.hasOwnProperty(property)) {
+        if (parseInt(property) === parseInt(pid)){
+          return _Processes[pid];
         }
     }
-    return false;
+  }
 };
 
 // Returns a list of the loaded process IDs
 function krnGetProcessPids()
 {
   var pids = [];
-  for (var i = 0; i < _Processes.length; i++ ){
-      pids.push(_Processes[i].pcb.getPid());
+  for (var property in _Processes) {
+    if (_Processes.hasOwnProperty(property)) {
+        pids.push(_Processes[property].pcb.getPid());
+    }
   }
   return pids;
 };
