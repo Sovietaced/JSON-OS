@@ -22,9 +22,9 @@
       this.Yreg = null;
       this.Zflag = null;
       this.pid = pid;
-      this.PC = base;
-      this.base = base;
-      this.offset = offset;  
+      this.PC = 0;
+      this.base = 0;
+      this.offset = 0;  
     };
 
     this.setMemoryBounds = function(base, offset){
@@ -45,7 +45,7 @@
     };
 
     this.getAbsolutePC = function(){
-      return this.base = this.PC;
+      return this.base + this.PC;
     };
 
     this.captureState = function(){
@@ -61,7 +61,7 @@
       _CPU.Xreg = this.Xreg;
       _CPU.Yreg = this.Yreg;
       _CPU.Zflag = this.Zflag;
-      _CPU.PC = this.PC + this.base;
+      _CPU.PC = this.getAbsolutePC();
     };
 
     this.kill = function(){

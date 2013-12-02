@@ -23,7 +23,10 @@ function CpuScheduler() {
 
     // Returns the head of the PCB
     this.getRunningProcess = function(){
-      return this.readyQueue.peek().pcb;
+      var pcbw = this.readyQueue.peek();
+      if (pcbw){
+        return pcbw;
+      }
     };
 
     // Loads the state of the head PCB after switching
@@ -31,21 +34,27 @@ function CpuScheduler() {
       if(this.readyQueue.getSize() > 0){
         console.log(this.readyQueue);
         var pcbw = this.getRunningProcess();
+        console.log(pcbw);
         // If we're loading a process in virtual memory swap!        
         if(pcbw.tsb){
-          _MemoryManager.swap(pcbw,this.readyQueue.tail());
+          console.log("we swappin");
+          _memoryManager.swap(pcbw);
         }
-       this.getRunningProcess().loadState();
+        console.log("finished swappin");
+        console.log(this.getRunningProcess());
+        // We should be able to load the state, confident that it has been loaded to memory
+        this.getRunningProcess().pcb.loadState();
       }
     };
 
     this.schedule = function(pcbw){
-
       this.readyQueue.enqueue(pcbw);
 
       // If this is the first process set it up so it can begin executing
       if(this.readyQueue.getSize() === 1){
+        console.log("we loadinnnn");
         this.loadProcess();
+        console.log(_CPU.PC);
         _CPU.isExecuting = true;
       }
 
@@ -85,14 +94,14 @@ function CpuScheduler() {
       }
       else{
         // Capture state for live updates for every clock tick
-        this.getRunningProcess().captureState();
+        this.getRunningProcess().pcb.captureState();
       }
     };
 
     // First come first serve, essentially do nothing
     this.FCFS = function(){
       // Capture state for live updates for every clock tick
-      this.getRunningProcess().captureState();
+      this.getRunningProcess().pcb.captureState();
     };
 
     this.PRIORITY = function(){
@@ -114,15 +123,15 @@ function CpuScheduler() {
       // Load state of new head
       this.loadProcess();
 
-      krnTrace("Scheduler has switched from process " + pcbw.pcb.getPid() + " to process " + this.getRunningProcess().getPid() + ".");
+      krnTrace("Scheduler has switched from process " + pcbw.pcb.getPid() + " to process " + this.getRunningProcess().pcb.getPid() + ".");
 
     };
 
     this.kill = function() {
       
       // Remove the head
-      var process = this.readyQueue.dequeue();
-      krnTrace("Scheduler has killed process " + process.getPid());
+      var pcbw = this.readyQueue.dequeue();
+      krnTrace("Scheduler has killed process " + pcbw.pcb.getPid());
 
       // Try to load the newhead
       this.loadProcess();

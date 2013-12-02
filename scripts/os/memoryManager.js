@@ -84,27 +84,35 @@ this.readVirtualMemory = function(pid){
   return krnReadFile(fileName);
 };
 
-this.swap = function(pcbwToMem, pcbwToHDD){
+this.swap = function(pcbwToMem){
 
   // Get the memory values before we overwrite them
-  var toHDDpid = pcbwToHDD.pcb.getPid();
+  var toHDDpid = this.getRandomPartition();
   var program = this.readPartition(toHDDpid);
+
   // Make this partition available for values from HDD
-  this.deactivatePartition(toHDDpid);
+  this.clearPartition(toHDDpid);
 
   // Write the program we're going to replace to disk
   var tsb = this.allocateVirtualMemory(program, toHDDpid);
   // TODO : HANDLE POSSIBLE ERRORS HERE
 
   // Give file location to process wrapper, signifying that it is on disk
+  var pcbwToHDD = krnFindProcess(toHDDpid);
   pcbwToHDD.setTSB(tsb);
 
   var toMempid = pcbwToMem.pcb.getPid();
   var program = this.readVirtualMemory(toMempid);
 
   // Write memory values to memory
-  var result = this.allocate(program, toMempid);
+  var partition = this.allocate(program, toMempid);
+  pcbwToMem.pcb.setMemoryBounds(partition.low, RAM_SIZE/PARTITIONS);
+  // Set TSB to null snce we are no longer relying on HDD
+  pcbwToMem.setTSB(null);
   //TODO : HANDLE POSSIBLE ERRORS HERE
+
+  console.log("result");
+  console.log(partition);
 
 };
 
@@ -123,10 +131,10 @@ this.swap = function(pcbwToMem, pcbwToHDD){
     console.log(this.partitions);
     
     // Get partition where pid is assigned
-    var index = findPartitionIndex(pid);
+    var index = this.findPartitionIndex(pid);
 
     if (index){
-      var partition = partitions[index];
+      var partition = this.partitions[index];
       this.clearMemory(partition.low, partition.high);
       this.partitions[i].pid = null;
     }
@@ -137,11 +145,11 @@ this.swap = function(pcbwToMem, pcbwToHDD){
   // Helper for swapping
   this.readPartition = function(pid){
 
-    var index = findPartitionIndex(pid);
+    var index = this.findPartitionIndex(pid);
 
     if (index){
 
-      var partition = partitions[index];
+      var partition = this.partitions[index];
       var values = '';
 
       for (var i = partition.low; i < partition.high; i++){
@@ -153,14 +161,21 @@ this.swap = function(pcbwToMem, pcbwToHDD){
     }
   };
 
-  // Set's partition pid ownership to null, thus making it available
-  this.deactivatePartition = function(pid){
-    var index = findPartitionIndex(pid);
+  // Returns pid of a random partition in use
+  this.getRandomPartition = function(){
 
-    if (index){
-      partitions[index].pid = null;
+    var partitionsInUse = [];
+
+    for (i in this.partitions){
+      var partition = this.partitions[i];
+      if(partition.pid != null){
+        partitionsInUse.push(partition.pid);
+      }
     }
-  };
+  // Return random element
+  return partitionsInUse[Math.floor(Math.random() * partitionsInUse.length)];
+
+  }
 
   this.findPartitionIndex = function(pid){
     for (i in this.partitions){
@@ -175,7 +190,7 @@ this.swap = function(pcbwToMem, pcbwToHDD){
   this.readValue = function(PC){
 
       PC = parseInt(PC, 16);
-      PC = this.validate(PC + _CpuScheduler.getRunningProcess().getBase());
+      PC = this.validate(PC + _CpuScheduler.getRunningProcess().pcb.getBase());
 
       if (PC !== false){
         return parseInt(_RAM.readMemory(PC), 16);
@@ -197,7 +212,7 @@ this.swap = function(pcbwToMem, pcbwToHDD){
   this.writeValue = function(PC, value){
 
     PC = parseInt(PC, 16);
-    PC = this.validate(PC + _CpuScheduler.getRunningProcess().getBase());
+    PC = this.validate(PC + _CpuScheduler.getRunningProcess().pcb.getBase());
 
     if (PC !== false){
         // Hack fix to store single digits as 00
@@ -213,8 +228,8 @@ this.swap = function(pcbwToMem, pcbwToHDD){
 
     // Get PCB limits
     if(_CpuScheduler.getRunningProcess() != null){
-      var low = _CpuScheduler.getRunningProcess().getBase();
-      var high = low + _CpuScheduler.getRunningProcess().getOffset();
+      var low = _CpuScheduler.getRunningProcess().pcb.getBase();
+      var high = low + _CpuScheduler.getRunningProcess().pcb.getOffset();
 
       // Validate relative bounds and return absolute location
       if(PC >= low && PC < high){
