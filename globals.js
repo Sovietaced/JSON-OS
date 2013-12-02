@@ -16,7 +16,7 @@ var APP_VERSION = "0.3";   // What did you expect?
 
 var CPU_CLOCK_INTERVAL = 100;   // This is in ms, or milliseconds, so 1000 = 1 second.
 var RAM_SIZE = 768; // 256 Bytes
-var PARTITIONS = 3; // 3 partitions for 3 programs
+var NUM_PARTITIONS = 3; // 3 partitions for 3 programs
 
 var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
                     // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.

@@ -41,9 +41,10 @@ function CpuScheduler() {
           _memoryManager.swap(pcbw);
         }
         console.log("finished swappin");
-        console.log(this.getRunningProcess());
+        console.log(this.getRunningProcess().pcb);
         // We should be able to load the state, confident that it has been loaded to memory
         this.getRunningProcess().pcb.loadState();
+        console.log(this.getRunningProcess().pcb);
       }
     };
 

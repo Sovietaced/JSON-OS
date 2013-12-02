@@ -12,8 +12,8 @@ function MemoryManager() {
     // Generate partitions
     this.init = function(){
 
-      var partitionSize = RAM_SIZE/PARTITIONS;
-      for(var i = 0; i < PARTITIONS; i++){
+      var partitionSize = RAM_SIZE/NUM_PARTITIONS;
+      for(var i = 0; i < NUM_PARTITIONS; i++){
         // Create hashes for each partition that hold some basic info
         this.partitions[i] = {pid: null, 
                               low: partitionSize * i,
@@ -48,10 +48,11 @@ function MemoryManager() {
 
   // Finds a free partition for a new process
   this.findFreePartition = function(pid){
-
     // Loop through the partitions and find one without a PID assigned
-    for (i in this.partitions){
+    for (var i = 0; i < NUM_PARTITIONS; i++){
+      console.log(this.partitions[i]);
       if(this.partitions[i].pid === null){
+        console.log("WEEEEE");
         // Mark this partition as taken by the PID
         this.partitions[i].pid = pid;
         return this.partitions[i];
@@ -70,6 +71,8 @@ this.allocateVirtualMemory = function(program, pid){
   // Get the TSB of the file and return it
   if (result){
       var tsb = findFile(fileName);
+      console.log("file created, tsb below");
+    console.log(tsb);
       return tsb;
   }
 };
@@ -88,13 +91,21 @@ this.swap = function(pcbwToMem){
 
   // Get the memory values before we overwrite them
   var toHDDpid = this.getRandomPartition();
+  console.log("rANDOM PARTITION");
+  console.log(toHDDpid);
   var program = this.readPartition(toHDDpid);
+  console.log(program);
 
+  console.log("boutta clear");
   // Make this partition available for values from HDD
   this.clearPartition(toHDDpid);
 
+  console.log("cleared");
+
   // Write the program we're going to replace to disk
   var tsb = this.allocateVirtualMemory(program, toHDDpid);
+
+  console.log("allocated");
   // TODO : HANDLE POSSIBLE ERRORS HERE
 
   // Give file location to process wrapper, signifying that it is on disk
@@ -106,7 +117,7 @@ this.swap = function(pcbwToMem){
 
   // Write memory values to memory
   var partition = this.allocate(program, toMempid);
-  pcbwToMem.pcb.setMemoryBounds(partition.low, RAM_SIZE/PARTITIONS);
+  pcbwToMem.pcb.setMemoryBounds(partition.low, RAM_SIZE/NUM_PARTITIONS);
   // Set TSB to null snce we are no longer relying on HDD
   pcbwToMem.setTSB(null);
   //TODO : HANDLE POSSIBLE ERRORS HERE
@@ -136,7 +147,7 @@ this.swap = function(pcbwToMem){
     if (index){
       var partition = this.partitions[index];
       this.clearMemory(partition.low, partition.high);
-      this.partitions[i].pid = null;
+      this.partitions[index].pid = null;
     }
 
     console.log(this.partitions);
@@ -153,7 +164,8 @@ this.swap = function(pcbwToMem){
       var values = '';
 
       for (var i = partition.low; i < partition.high; i++){
-        values += this.readMemory(i);
+        // We don't want to validate the PC here because we may not have a loaded process with bounds yet
+        values += _RAM.readMemory(i);
       }
       console.log("VALUES");
       console.log(values);
@@ -178,7 +190,7 @@ this.swap = function(pcbwToMem){
   }
 
   this.findPartitionIndex = function(pid){
-    for (i in this.partitions){
+    for (var i = 0; i < NUM_PARTITIONS; i++){
       var partition = this.partitions[i];
       if(partition.pid === pid){
         return i;
@@ -236,6 +248,9 @@ this.swap = function(pcbwToMem){
         return PC;
       }
       else {
+        console.log("memz outta boundz");
+        console.log(_CPU.PC);
+        console.log(PC);
          krnTrace("Memory out of bounds exception. Killing the process.");
         _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_OUT_OF_BOUNDS_IRQ)); 
       }

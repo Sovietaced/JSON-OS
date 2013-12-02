@@ -144,9 +144,9 @@ function krnFSFormat()
                 var data = generateDiskData(0, generateTSB('-', '-', '-'), "");
 
                 // Generate MBR code
-                //if (tsb === MBR_TSB){
-                    //data = generateDiskData(1, generateTSB('-', '-', '-'), "MBR");
-                //}
+                if (tsb === MBR_TSB){
+                    data = generateDiskData(1, generateTSB('-', '-', '-'), "MBR");
+                }
 
                 // Write data to disk
                 disk.write(tsb,data);
@@ -394,6 +394,8 @@ function krnRemoveFileDirectory(directoryTSB)
 
 function findFreeFileBlocks(fileData)
 {   
+    console.log("FINDING FREE FILE BLOCKS");
+    console.log(fileData);
     // Get the number of blocks needed and round up
     var numBlocks = Math.ceil(fileData.length / BLOCK_DATA_SIZE);
 

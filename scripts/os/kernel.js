@@ -213,17 +213,18 @@ function krnCreateProcess(program)
 
     // Attempt to allocate memory for program
     var partition = _memoryManager.allocate(program, process.getPid());
-
+    console.log(partition);
     // Physical Memory
     if (partition){
-      process.setMemoryBounds(partition.low, RAM_SIZE/PARTITIONS); // Create process by passing in ID
+      process.setMemoryBounds(partition.low, RAM_SIZE/NUM_PARTITIONS); // Create process by passing in ID
       // Initialize the wrapper and write a null TSB because it's not loaded into the hdd
       pcbw.init(process, null);
     }
     // Virtual Memory
     else{
         var tsb = _memoryManager.allocateVirtualMemory(program, process.getPid());
-
+        console.log("ALLOCATING VIRTUAL MEMORY!");
+        console.log(_memoryManager.partitions);
         if (tsb){
           // Initialize the wrapper and let it know that the process is being held in virtual memory
           pcbw.init(process, tsb);
@@ -300,7 +301,6 @@ function krnRunProcess(pcbw)
 function krnFindProcess(pid)
 {
   for (var i = 0; i < _Processes.length; i++ ){
-    console.log(_Processes[i]);
         if (_Processes[i].pcb.getPid() == parseInt(pid)){
             return _Processes[i];
         }

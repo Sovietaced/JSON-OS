@@ -23,8 +23,8 @@
       this.Zflag = null;
       this.pid = pid;
       this.PC = 0;
-      this.base = 0;
-      this.offset = 0;  
+      this.base = null;
+      this.offset = null;  
     };
 
     this.setMemoryBounds = function(base, offset){
