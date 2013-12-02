@@ -218,7 +218,7 @@ function krnCreateProcess(program)
     if (partition){
       process.setMemoryBounds(partition.low, RAM_SIZE/PARTITIONS); // Create process by passing in ID
       // Initialize the wrapper and write a null TSB because it's not loaded into the hdd
-      pcbw.init(process.getPid(), null);
+      pcbw.init(process, null);
     }
     // Virtual Memory
     else{
@@ -226,12 +226,12 @@ function krnCreateProcess(program)
 
         if (tsb){
           // Initialize the wrapper and let it know that the process is being held in virtual memory
-          pcbw.init(process.getPid(), tsb);
+          pcbw.init(process, tsb);
         }
     }
 
-    // Add process to process list
-    _Processes.push(process);
+    // Add process wrapper to the process list
+    _Processes.push(pcbw);
     return process.getPid();
 };
 
@@ -300,6 +300,7 @@ function krnRunProcess(pcbw)
 function krnFindProcess(pid)
 {
   for (var i = 0; i < _Processes.length; i++ ){
+    console.log(_Processes[i]);
         if (_Processes[i].pcb.getPid() == parseInt(pid)){
             return _Processes[i];
         }

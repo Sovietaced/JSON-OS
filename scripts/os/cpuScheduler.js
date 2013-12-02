@@ -48,7 +48,7 @@ function CpuScheduler() {
         this.swap(pcbw);
       }
 
-      krnTrace("Process " + pcb.getPid() + " scheduled.");
+      krnTrace("Process " + pcbw.pcb.getPid() + " scheduled.");
     };
 
     this.run = function(){
@@ -75,6 +75,10 @@ function CpuScheduler() {
           this.mode = 0;
          _CPU.isExecuting = false;
         }
+    };
+
+    this.swap = function(){
+
     };
 
     // Round robin, switch every n clock ticks (quantum)
