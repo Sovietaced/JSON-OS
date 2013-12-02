@@ -14,4 +14,8 @@
       this.pcb = pcb;     
       this.tsb = tsb;
     };
+
+  this.setTSB = function(tsb){
+    this.tsb = tsb;
+  }
 }

@@ -33,7 +33,7 @@ function CpuScheduler() {
         var pcbw = this.getRunningProcess();
         // If we're loading a process in virtual memory swap!        
         if(pcbw.tsb){
-          this.swap(pcbw);
+          _MemoryManager.swap(pcbw,this.readyQueue.tail());
         }
        this.getRunningProcess().loadState();
       }

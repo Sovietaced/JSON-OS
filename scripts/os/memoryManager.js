@@ -79,8 +79,33 @@ this.readVirtualMemory = function(pid){
   
   // Create the file
   var fileName = "pid" + pid;
-
+  console.log("readVirtualMemory");
+  console.log(krnReadFile(fileName));
   return krnReadFile(fileName);
+};
+
+this.swap = function(pcbwToMem, pcbwToHDD){
+
+  // Get the memory values before we overwrite them
+  var toHDDpid = pcbwToHDD.pcb.getPid();
+  var program = this.readPartition(toHDDpid);
+  // Make this partition available for values from HDD
+  this.deactivatePartition(toHDDpid);
+
+  // Write the program we're going to replace to disk
+  var tsb = this.allocateVirtualMemory(program, toHDDpid);
+  // TODO : HANDLE POSSIBLE ERRORS HERE
+
+  // Give file location to process wrapper, signifying that it is on disk
+  pcbwToHDD.setTSB(tsb);
+
+  var toMempid = pcbwToMem.pcb.getPid();
+  var program = this.readVirtualMemory(toMempid);
+
+  // Write memory values to memory
+  var result = this.allocate(program, toMempid);
+  //TODO : HANDLE POSSIBLE ERRORS HERE
+
 };
 
   // Self explanatory
@@ -96,17 +121,55 @@ this.readVirtualMemory = function(pid){
   // Self explanatory
   this.clearPartition = function(pid){
     console.log(this.partitions);
-     // Loop through the partitions and find one with the PID assigned
-    for (i in this.partitions){
-      var partition = this.partitions[i];
-      if(partition.pid === pid){
-        this.clearMemory(partition.low, partition.high);
-        this.partitions[i].pid = null;
-      }
+    
+    // Get partition where pid is assigned
+    var index = findPartitionIndex(pid);
+
+    if (index){
+      var partition = partitions[index];
+      this.clearMemory(partition.low, partition.high);
+      this.partitions[i].pid = null;
     }
 
     console.log(this.partitions);
   }
+
+  // Helper for swapping
+  this.readPartition = function(pid){
+
+    var index = findPartitionIndex(pid);
+
+    if (index){
+
+      var partition = partitions[index];
+      var values = '';
+
+      for (var i = partition.low; i < partition.high; i++){
+        values += this.readMemory(i);
+      }
+      console.log("VALUES");
+      console.log(values);
+      return values;
+    }
+  };
+
+  // Set's partition pid ownership to null, thus making it available
+  this.deactivatePartition = function(pid){
+    var index = findPartitionIndex(pid);
+
+    if (index){
+      partitions[index].pid = null;
+    }
+  };
+
+  this.findPartitionIndex = function(pid){
+    for (i in this.partitions){
+      var partition = this.partitions[i];
+      if(partition.pid === pid){
+        return i;
+      }
+    }
+  };
 
   // Nice help that does base conversions
   this.readValue = function(PC){
