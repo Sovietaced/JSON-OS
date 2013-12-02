@@ -260,6 +260,23 @@ function krnGetSchedule()
   return _CpuScheduler.currentAlgorithm;
 };
 
+function krnGetSchedules()
+{
+  return _CpuScheduler.SCHEDULING_ALGORITHMS;
+};
+
+function krnSetSchedule(name)
+{  
+  name = name.toUpperCase();
+  for (var i = 0; i <_CpuScheduler.SCHEDULING_ALGORITHMS.length; i++){
+    if (_CpuScheduler.SCHEDULING_ALGORITHMS[i] == name){
+      _CpuScheduler.currentAlgorithm = name;
+      return true;
+    }
+  }
+  return "Scheduling algorithm not recognized";
+};
+
 // Remove head process from scheduler
 function krnKillProcess()
 {

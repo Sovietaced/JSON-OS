@@ -103,11 +103,25 @@ function shellInit() {
     sc.function = shellPs;
     this.commandList[this.commandList.length] = sc;
 
-    // getSchedule
+    // getschedule
     sc = new ShellCommand();
     sc.command = "getschedule";
     sc.description = "- Returns the current process scheduling algorithm";
     sc.function = shellGetSchedule;
+    this.commandList[this.commandList.length] = sc;
+
+    // setschedule
+    sc = new ShellCommand();
+    sc.command = "setschedule";
+    sc.description = " <string> - Set the current process scheduling algorithm";
+    sc.function = shellSetSchedule;
+    this.commandList[this.commandList.length] = sc;
+
+    // listschedules
+    sc = new ShellCommand();
+    sc.command = "listschedules";
+    sc.description = " - Lists the available scheduling algorithms";
+    sc.function = shellListSchedules;
     this.commandList[this.commandList.length] = sc;
 
     // run
@@ -490,6 +504,39 @@ function shellPs()
 function shellGetSchedule()
 {   
     _StdIn.putText(krnGetSchedule());
+}
+
+function shellSetSchedule(args)
+{   
+    if (args.length > 0){
+
+        var name = args[0];
+
+        var result = krnSetSchedule(name);
+
+        if (result == true){
+            _StdIn.putText("Schedule set.");
+        }
+        else{
+            _StdIn.putText(result);
+        }
+
+    }
+    else{
+        _StdIn.putText("Missing scheduling algorithm argument!");
+    }
+}
+
+function shellListSchedules()
+{   
+    var algos = krnGetSchedules();
+    var str = '';
+
+    for(var i = 0; i < algos.length; i++){
+        str += algos[i] + ' ';
+    }
+
+    _StdIn.putText(str);
 }
 
 function shellRun(args)
