@@ -99,14 +99,21 @@ this.swap = function(pcbwToMem){
 
   // Get the memory values before we overwrite them
   var index = this.getRandomPartitionIndex();
+  console.log("USING PARTITION : " + index);
   var pid = this.partitions[index].pid;
   var program = this.readPartition(index);
+    this.debug();
 
   // Make this partition available for values from HDD
   this.clearPartition(index);
 
   this.debug();
 
+  var toMempid = pcbwToMem.pcb.getPid();
+  var program = this.readVirtualMemory(toMempid);
+
+  // Free up the space we were using previously
+  this.clearVirtualMemory(toMempid);
 
   // Write the program we're going to replace to disk
   var tsb = this.allocateVirtualMemory(program, pid);
@@ -115,12 +122,6 @@ this.swap = function(pcbwToMem){
   // Give file location to process wrapper, signifying that it is on disk
   var pcbwToHDD = krnFindProcess(pid);
   pcbwToHDD.setTSB(tsb);
-
-  var toMempid = pcbwToMem.pcb.getPid();
-  var program = this.readVirtualMemory(toMempid);
-
-  // Free up the space we were using previously
-  this.clearVirtualMemory(toMempid);
 
  console.log("WRITING TO THE PARTITION BELOW");
   // Write memory values to memory
@@ -139,9 +140,9 @@ this.swap = function(pcbwToMem){
 };
 
   // Self explanatory
-  this.clearMemory = function(base, offset){
+  this.clearMemory = function(base, high){
 
-    for (var i = base; i < base + offset; i++){
+    for (var i = base; i < high; i++){
       _RAM.writeMemory(i, "00");
     }
 
@@ -152,6 +153,8 @@ this.swap = function(pcbwToMem){
   this.clearPartition = function(index){
     
       var partition = this.partitions[index];
+      console.log("Partition low : " + partition.low);
+      console.log("Partition high : " + partition.high);
       this.clearMemory(partition.low, partition.high);
       this.partitions[index].pid = null;
   }
@@ -184,6 +187,7 @@ this.debug = function(){
 
       str += temp + '\n';
   }
+  console.log("DEBUGGING");
   console.log(str);
 
 };
@@ -195,7 +199,6 @@ this.debug = function(){
     for (var i = 0; i < NUM_PARTITIONS; i++){
       var partition = this.partitions[i];
       if(partition.pid !== null){
-        console.log("valid random partition found : " + i);
         partitionsInUse.push(i);
       }
     }
