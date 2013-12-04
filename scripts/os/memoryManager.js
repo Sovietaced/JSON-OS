@@ -52,16 +52,14 @@ function MemoryManager() {
     for (var i = 0; i < NUM_PARTITIONS; i++){
       console.log(this.partitions[i]);
       if(this.partitions[i].pid === null){
-        console.log("WEEEEE");
         // Mark this partition as taken by the PID
         this.partitions[i].pid = pid;
         return this.partitions[i];
       }
     }
-
   };
 
-  // Wrapper for creating files for PCBs
+  // Helper for allocating virtual memory
 this.allocateVirtualMemory = function(program, pid){
   
   // Create the file
@@ -71,13 +69,11 @@ this.allocateVirtualMemory = function(program, pid){
   // Get the TSB of the file and return it
   if (result){
       var tsb = findFile(fileName);
-      console.log("file created, tsb below");
-    console.log(tsb);
       return tsb;
   }
 };
 
-  // Wrapper for creating files for PCBs
+// Helper for writing memory to disk
 this.readVirtualMemory = function(pid){
   
   // Create the file
@@ -85,12 +81,12 @@ this.readVirtualMemory = function(pid){
   return krnReadFile(fileName);
 };
 
+// Helper for removing virtual memory
 this.clearVirtualMemory = function(pid){
 
   var fileName = "pid" + pid;
 
   krnDeleteFile(fileName);
-
 };
 
 
@@ -123,20 +119,17 @@ this.swap = function(pcbwToMem){
   var pcbwToHDD = krnFindProcess(pid);
   pcbwToHDD.setTSB(tsb);
 
- console.log("WRITING TO THE PARTITION BELOW");
   // Write memory values to memory
   var partition = this.allocate(program, toMempid);
-  console.log(partition);
+  // Update the pcb's location in memory
   pcbwToMem.pcb.setMemoryBounds(partition.low, RAM_SIZE/NUM_PARTITIONS);
 
   // Set TSB to null snce we are no longer relying on HDD
   pcbwToMem.setTSB(null);
-  //TODO : HANDLE POSSIBLE ERRORS HERE
 
   this.debug();
   // Return the updated process blocks
   return [pcbwToMem, pcbwToHDD]
-
 };
 
   // Self explanatory
@@ -153,16 +146,14 @@ this.swap = function(pcbwToMem){
   this.clearPartition = function(index){
     
       var partition = this.partitions[index];
-      console.log("Partition low : " + partition.low);
-      console.log("Partition high : " + partition.high);
       this.clearMemory(partition.low, partition.high);
+      // Set the partition use to null
       this.partitions[index].pid = null;
   }
 
   // Helper for swapping
   this.readPartition = function(index){
-    console.log("we in read partition");
-   
+
     var partition = this.partitions[index];
     var values = '';
 
@@ -170,8 +161,7 @@ this.swap = function(pcbwToMem){
       // We don't want to validate the PC here because we may not have a loaded process with bounds yet
       values += _RAM.readMemory(i);
     }
-    console.log("VALUES");
-    console.log(values);
+
     return values;
   };
 
@@ -204,18 +194,13 @@ this.debug = function(){
     }
   // Return random element
   return partitionsInUse[Math.floor(Math.random() * partitionsInUse.length)];
-
   }
 
+  // Parts the partition being used by the specified pid
   this.findPartitionIndex = function(pid){
-    console.log(pid);
-    console.log("we in find partition index");
     for (var i = 0; i < NUM_PARTITIONS; i++){
-      console.log("we in the loop");
       var partition = this.partitions[i];
-      console.log(partition);
       if(partition.pid === pid){
-        console.log("we returning");
         return i;
       }
     }
@@ -301,6 +286,4 @@ this.debug = function(){
          $('#memory').append('<tr>' + data + '</tr>');
       }
   }; 
-
-
 }

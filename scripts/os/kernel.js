@@ -235,6 +235,17 @@ function krnCreateProcess(program)
     return process.getPid();
 };
 
+// This updates the resident list when the memory manager changes the state of the process wrappers
+function updateProcessList(pcbws){
+    for(var i = 0; i < _Processes.length; i++){
+      for (var j = 0; j < pcbws.length; j++){
+        if(pcbws[j].pcb.getPid() == _Processes[i].pcb.getPid()){
+          _Processes[i] = pcbws[j];
+        }
+      }
+    }
+  };
+
 function addProcessToList(pcbw){
   var pid = pcbw.pcb.getPid();
   _Processes[pid] = pcbw;
