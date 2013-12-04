@@ -350,6 +350,7 @@ function krnWriteFileData(blocks, data)
         }
         // Write data to block
         disk.write(blocks[i], data);
+        updateFileSystemDisplay();
     }
 }
 
@@ -365,6 +366,7 @@ function krnRemoveFileData(tsb)
 
         // Write file to file TSB
         disk.write(tsb, cleanData);
+        updateFileSystemDisplay();
 
         // Set the TSB to the TSB described by the chain
         oldData = decodeDiskData(oldData);
@@ -380,6 +382,7 @@ function krnWriteFileDirectory(directoryTSB, fileTSB, name)
 
     // Write data about file in directory TSB
     disk.write(directoryTSB, data);
+    updateFileSystemDisplay();
 }
 
 function krnRemoveFileDirectory(directoryTSB)
@@ -389,6 +392,7 @@ function krnRemoveFileDirectory(directoryTSB)
 
     // Write data about file in directory TSB
     disk.write(directoryTSB, data);
+    updateFileSystemDisplay();
 }
 
 function findFreeFileBlocks(fileData)
@@ -467,7 +471,6 @@ function getFileTSB(tsb)
 }
 
 function updateFileSystemDisplay(){
-    console.log("we here now");
     // Remove table body rows
     $("#hdd").empty(); 
 
@@ -478,8 +481,7 @@ function updateFileSystemDisplay(){
 
                 // Generate TSB for cuntion and generate data
                 var tsb = generateTSB(t,s,b);
-                console.log(tsb);
-                var data = disk.read(tsb);
+                var data = localStorage[tsb];
                 data = decodeDiskData(data);
                 var str = '';
                 str += "<td> " + tsb + "</td>";
