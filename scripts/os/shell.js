@@ -570,15 +570,7 @@ function shellRunAll(args)
     
     if (pids.length > 0) {
         for (var i = 0; i < pids.length; i++ ){
-
-            var process = krnFindProcess(pids[i]);
-
-            if (process){
-                krnRunProcess(process);
-            }
-            else{
-                _StdIn.putText("Failed to find process with PID " + pids[i] + ".");
-            }
+                krnRunProcess(pids[i]);
         }
     }    
     else{

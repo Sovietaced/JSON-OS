@@ -85,34 +85,54 @@ this.readVirtualMemory = function(pid){
   return krnReadFile(fileName);
 };
 
+this.clearVirtualMemory = function(pid){
+
+  var fileName = "pid" + pid;
+
+  krnDeleteFile(fileName);
+
+};
+
+
+
 this.swap = function(pcbwToMem){
 
   // Get the memory values before we overwrite them
-  var toHDDpid = this.getRandomPartition();
-  var program = this.readPartition(toHDDpid);
+  var index = this.getRandomPartitionIndex();
+  var pid = this.partitions[index].pid;
+  var program = this.readPartition(index);
 
   // Make this partition available for values from HDD
-  this.clearPartition(toHDDpid);
+  this.clearPartition(index);
+
+  this.debug();
+
 
   // Write the program we're going to replace to disk
-  var tsb = this.allocateVirtualMemory(program, toHDDpid);
+  var tsb = this.allocateVirtualMemory(program, pid);
   // TODO : HANDLE POSSIBLE ERRORS HERE
 
   // Give file location to process wrapper, signifying that it is on disk
-  var pcbwToHDD = krnFindProcess(toHDDpid);
+  var pcbwToHDD = krnFindProcess(pid);
   pcbwToHDD.setTSB(tsb);
 
   var toMempid = pcbwToMem.pcb.getPid();
   var program = this.readVirtualMemory(toMempid);
 
+  // Free up the space we were using previously
+  this.clearVirtualMemory(toMempid);
+
+ console.log("WRITING TO THE PARTITION BELOW");
   // Write memory values to memory
   var partition = this.allocate(program, toMempid);
+  console.log(partition);
   pcbwToMem.pcb.setMemoryBounds(partition.low, RAM_SIZE/NUM_PARTITIONS);
 
   // Set TSB to null snce we are no longer relying on HDD
   pcbwToMem.setTSB(null);
   //TODO : HANDLE POSSIBLE ERRORS HERE
 
+  this.debug();
   // Return the updated process blocks
   return [pcbwToMem, pcbwToHDD]
 
@@ -129,51 +149,54 @@ this.swap = function(pcbwToMem){
   }
 
   // Self explanatory
-  this.clearPartition = function(pid){
-    console.log(this.partitions);
+  this.clearPartition = function(index){
     
-    // Get partition where pid is assigned
-    var index = this.findPartitionIndex(pid);
-
-    if (index != null){
       var partition = this.partitions[index];
       this.clearMemory(partition.low, partition.high);
       this.partitions[index].pid = null;
-    }
-
-    console.log(this.partitions);
   }
 
   // Helper for swapping
-  this.readPartition = function(pid){
+  this.readPartition = function(index){
     console.log("we in read partition");
-    var index = this.findPartitionIndex(pid);
-    console.log(index);
+   
+    var partition = this.partitions[index];
+    var values = '';
 
-    if (index != null){
-      console.log("we in the conditional");
-      var partition = this.partitions[index];
-      var values = '';
-
-      for (var i = partition.low; i < partition.high; i++){
-        // We don't want to validate the PC here because we may not have a loaded process with bounds yet
-        values += _RAM.readMemory(i);
-      }
-      console.log("VALUES");
-      console.log(values);
-      return values;
+    for (var i = partition.low; i < partition.high; i++){
+      // We don't want to validate the PC here because we may not have a loaded process with bounds yet
+      values += _RAM.readMemory(i);
     }
+    console.log("VALUES");
+    console.log(values);
+    return values;
   };
 
+this.debug = function(){
+  var str = '';
+
+  for (var i = 0; i < NUM_PARTITIONS; i++){
+    var temp = '';
+    var partition = this.partitions[i];
+     for (var j = partition.low; j < partition.high; j++){
+        temp += _RAM.readMemory(j);
+      }
+
+      str += temp + '\n';
+  }
+  console.log(str);
+
+};
   // Returns pid of a random partition in use
-  this.getRandomPartition = function(){
+  this.getRandomPartitionIndex = function(){
 
     var partitionsInUse = [];
 
-    for (i in this.partitions){
+    for (var i = 0; i < NUM_PARTITIONS; i++){
       var partition = this.partitions[i];
-      if(partition.pid != null){
-        partitionsInUse.push(partition.pid);
+      if(partition.pid !== null){
+        console.log("valid random partition found : " + i);
+        partitionsInUse.push(i);
       }
     }
   // Return random element

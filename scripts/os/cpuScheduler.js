@@ -34,6 +34,7 @@ function CpuScheduler() {
       for(var i = 0; i < this.readyQueue.getSize(); i++){
         for (var j = 0; j < pcbws.length; j++){
           if(pcbws[j].pcb.getPid() == this.readyQueue.q[i].pcb.getPid()){
+            console.log("updating");
             this.readyQueue.q[i] = pcbws[j];
           }
         }
@@ -43,21 +44,21 @@ function CpuScheduler() {
     // Loads the state of the head PCB after switching
     this.loadProcess = function(){
       if(this.readyQueue.getSize() > 0){
-        console.log(this.readyQueue);
         var pcbw = this.getRunningProcess();
-        console.log(pcbw);
         // If we're loading a process in virtual memory swap!        
         if(pcbw.tsb){
+          console.log(JSON.stringify(this.getRunningProcess()));
           console.log("we swappin");
           // Swap 
           var updatedPCBWs = _memoryManager.swap(pcbw);
           // Update our copy of the process wrappers with the updated ones
           this.updateReadyQueue(updatedPCBWs);
+          console.log("finished swappin");
         }
-        console.log("finished swappin");
-        console.log(this.getRunningProcess().pcb);
+
+        pcbw = this.getRunningProcess();
+        pcbw.pcb.loadState();
         // We should be able to load the state, confident that it has been loaded to memory
-        this.getRunningProcess().pcb.loadState();
         console.log(this.getRunningProcess().pcb);
       }
     };
@@ -79,7 +80,7 @@ function CpuScheduler() {
 
     this.run = function(){
         if (this.readyQueue.getSize() > 0){
-
+          console.log(this.getRunningProcess().pcb.pid);
           // Determine the current scheduling algorithm and let it handle the scheduling
           switch (this.currentAlgorithm)
           {

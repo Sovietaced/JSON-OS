@@ -120,6 +120,7 @@ function CLIconsole() {
               memory = _memoryManager.readMemory(++memLocation);
             }
             _StdIn.advanceLine();
+            //console.log(zeroTermString)
             _StdIn.putText(zeroTermString);
         }
     };

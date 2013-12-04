@@ -112,7 +112,7 @@ function krnOnCPUClockPulse()
     else                     // If there are no interrupts and there is nothing being executed then just be idle.
     {
        krnTrace("Idle");
-       console.log(JSON.stringify(_Processes));
+      //console.log(JSON.stringify(_Processes));
     }
 }
 
