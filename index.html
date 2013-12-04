@@ -110,8 +110,8 @@
 
             <br />
            <label>
-             MEMORY
-             <br>
+             <span id="title-memory">MEMORY</span> | <span id="title-hdd">HDD</span>
+             <br />
           <div id="memoryContainer" style="height: 300px; width: 500px; overflow: auto;">
            <table class="table table-bordered" id="memory">
               <thead>
@@ -132,8 +132,25 @@
                 </tr>
               </tbody>
             </table>
-          </label>  
+            </div>
+
+            <div id="hddContainer" style="height: 300px; width: 500px; overflow: auto;">
+           <table class="table table-bordered" id="hdd">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          </label>  
+
         </div>
     <div class="col-md-6">
        <div id="divLog">
@@ -142,7 +159,7 @@
              <br>
              <textarea name="taLog"
                        id  ="taLog"
-                       rows="26"
+                       rows="25"
                        cols="48"
                        style="border-style:solid; border-color: white; color: white; background-color: black;"
              ></textarea>
@@ -204,4 +221,29 @@
   </div>
 </div>
 </body>
+<script type="text/javascript">
+  // onload
+    $("#hddContainer").hide();
+    $("#title-memory").css('color', 'white');
+
+    $('#title-memory').click(function(){
+        $("#hddContainer").hide();
+        $("#title-memory").css('color', 'white');
+        $("#title-hdd").css('color', '#888');
+    });
+
+    $('#title-memory').click(function(){
+        $("#hddContainer").hide();
+        $("#memoryContainer").show();
+        $("#title-memory").css('color', 'white');
+        $("#title-hdd").css('color', '#888');
+    });
+
+    $('#title-hdd').click(function(){
+        $("#hddContainer").show();
+        $("#memoryContainer").hide();
+        $("#title-memory").css('color', '#888');
+        $("#title-hdd").css('color', 'white');
+    });
+</script>
 </html>

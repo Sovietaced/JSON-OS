@@ -33,12 +33,21 @@ function Ram() {
 
     this.readMemory = function(PC) {
       return this.memory[PC];
-    }
+    };
 
     //Debugging
     this.dumpMemory = function() {
       for (var i = 0; i < this.memory.length; i++){
           console.log(this.memory[i]);
         }
-    }
+    };
+
+    // Updates browser display
+    this.updateDisplay = function(){
+      $('#PC').html(this.PC);
+      $('#Acc').html(this.Acc);
+      $('#Xreg').html(this.Xreg);
+      $('#Yreg').html(this.Yreg);
+      $('#Zflag').html(this.Zflag);
+    };
 }

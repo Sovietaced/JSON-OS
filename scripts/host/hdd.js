@@ -8,7 +8,7 @@
 function Hdd() {
 
     this.init = function() {
-
+      
     };
 
     this.write = function(tsb, value) {
@@ -23,5 +23,5 @@ function Hdd() {
       for (tsb in localStorage){
         console.log(localStorage[tsb]);
       }
-    }
+    };
 }

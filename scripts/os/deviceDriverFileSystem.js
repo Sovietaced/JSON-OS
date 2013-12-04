@@ -42,7 +42,7 @@ function DeviceDriverFileSystem()                     // Add or override specifi
     // this.buffer = "";    // TODO: Do we need this?
     // Override the base method pointers.
     this.driverEntry = krnFSDriverEntry;
-    this.isr = krnFSDispatchDiskRequest;
+    this.isr = null;
     // "Constructor" code.
 }
 
@@ -51,6 +51,7 @@ function krnFSDriverEntry()
     // Initialization routine for this, the kernel-mode File System Device Driver.
     disk = _HDD;                                // Assign Hardawre to driver
     krnFSFormat();                              // Format the disk
+    updateFileSystemDisplay();
     this.status = "loaded";
 }
 
@@ -127,11 +128,6 @@ function decodeDiskData(dataa)
             'data' : data}
 }
 
-function krnFSDispatchDiskRequest(params)
-{
-   
-}
-
 function krnFSFormat()
 {   
     // Format the disk
@@ -169,15 +165,12 @@ function krnListFiles()
 
             // Get value hash
             data = decodeDiskData(data);
-            console.log(data);
 
             // Check for active
             if (data['activity'] == '1'){
                 // Get value by shaving off null characters (dashes)
                 var value = data['data'].toString();
                 value = value.slice(0, value.indexOf("-"));
-
-                console.log(value);
 
                 if (value != ''){
                     files += value + ' '
@@ -190,8 +183,7 @@ function krnListFiles()
 
 // create <name> <data>
 function krnCreateFile(name, data)
-{   console.log("dataaaa");
-    console.log(data);
+{   
     if (findFile(name)){
         return "Failed to create file. File already exists."
     }
@@ -282,7 +274,6 @@ function krnWriteFile(fileName, data)
         else{
 
             var freeFileBlocks = [tsb];
-            console.log(freeFileBlocks);
         }
 
         krnWriteFileData(freeFileBlocks, data);
@@ -473,4 +464,30 @@ function getFileTSB(tsb)
     tsb = getNextTSB(data);
 
     return tsb;
+}
+
+function updateFileSystemDisplay(){
+    console.log("we here now");
+    // Remove table body rows
+    $("#hdd").empty(); 
+
+    // Render HTML and push it
+    for (var t =0; t < NUM_TRACKS; t++){
+        for (var s = 0; s < NUM_SECTORS; s++){
+            for (var b = 0; b < NUM_BLOCKS; b++){
+
+                // Generate TSB for cuntion and generate data
+                var tsb = generateTSB(t,s,b);
+                console.log(tsb);
+                var data = disk.read(tsb);
+                data = decodeDiskData(data);
+                var str = '';
+                str += "<td> " + tsb + "</td>";
+                str += "<td> " + data['activity'] + "</td>";
+                str += "<td> " + generateTSB(data['track'], data['block'], data['sector']) + "</td>";
+                str += "<td> " + data['data'] + "</td>";
+                 $('#hdd').append('<tr>' + str + '</tr>');
+            }
+        }
+    }
 }

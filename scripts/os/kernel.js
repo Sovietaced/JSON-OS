@@ -108,6 +108,7 @@ function krnOnCPUClockPulse()
         _CpuScheduler.updateDisplay();
         _memoryManager.updateDisplay();
         _CPU.updateDisplay();
+        updateFileSystemDisplay();
     }     
     else                     // If there are no interrupts and there is nothing being executed then just be idle.
     {
