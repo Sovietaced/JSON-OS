@@ -273,7 +273,12 @@ function krnKill(pid)
   if (process){
 
     // Do memory cleanup
-    process.pcb.kill();
+    if(process.tsb != null){
+      _memoryManager.clearVirtualMemory(process.pcb.getPid());
+    }
+    else{
+      process.pcb.kill();
+    }
 
     deleteProcessFromList(process);
 

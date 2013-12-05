@@ -88,26 +88,24 @@ this.clearVirtualMemory = function(pid){
   krnDeleteFile(fileName);
 };
 
-
-
 this.swap = function(pcbwToMem){
 
   // Get the memory values before we overwrite them
   var index = this.getRandomPartitionIndex();
   var pid = this.partitions[index].pid;
-  var program = this.readPartition(index);
+  var programToHDD = this.readPartition(index);
 
   // Make this partition available for values from HDD
   this.clearPartition(index);
 
   var toMempid = pcbwToMem.pcb.getPid();
-  var program = this.readVirtualMemory(toMempid);
+  var programToMem = this.readVirtualMemory(toMempid);
 
   // Free up the space we were using previously
   this.clearVirtualMemory(toMempid);
 
   // Write the program we're going to replace to disk
-  var tsb = this.allocateVirtualMemory(program, pid);
+  var tsb = this.allocateVirtualMemory(programToHDD, pid);
   // TODO : HANDLE POSSIBLE ERRORS HERE
 
   // Give file location to process wrapper, signifying that it is on disk
@@ -115,7 +113,7 @@ this.swap = function(pcbwToMem){
   pcbwToHDD.setTSB(tsb);
 
   // Write memory values to memory
-  var partition = this.allocate(program, toMempid);
+  var partition = this.allocate(programToMem, toMempid);
   // Update the pcb's location in memory
   pcbwToMem.pcb.setMemoryBounds(partition.low, RAM_SIZE/NUM_PARTITIONS);
 
