@@ -18,10 +18,4 @@ function Hdd() {
     this.read = function(tsb) {
       return localStorage[tsb];
     };
-
-    this.debug = function() {
-      for (tsb in localStorage){
-        console.log(localStorage[tsb]);
-      }
-    };
 }

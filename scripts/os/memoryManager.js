@@ -96,12 +96,9 @@ this.swap = function(pcbwToMem){
   var index = this.getRandomPartitionIndex();
   var pid = this.partitions[index].pid;
   var program = this.readPartition(index);
-    this.debug();
 
   // Make this partition available for values from HDD
   this.clearPartition(index);
-
-  this.debug();
 
   var toMempid = pcbwToMem.pcb.getPid();
   var program = this.readVirtualMemory(toMempid);
@@ -125,7 +122,6 @@ this.swap = function(pcbwToMem){
   // Set TSB to null snce we are no longer relying on HDD
   pcbwToMem.setTSB(null);
 
-  this.debug();
   // Return the updated process blocks
   return [pcbwToMem, pcbwToHDD]
 };
