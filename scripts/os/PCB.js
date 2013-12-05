@@ -7,20 +7,20 @@
 
    function PCB() {
 
-     var Acc = null;
-     var Xreg = null;
-     var Yreg = null;
-     var Zflat = null;
+     var Acc = 0;
+     var Xreg = 0;
+     var Yreg = 0;
+     var Zflag = 0;
      var pid = null;
      var PC = 0;
      var base = 0;
      var offset = 0;              
      
      this.init = function(pid){
-      this.Acc = null;
-      this.Xreg = null;
-      this.Yreg = null;
-      this.Zflag = null;
+      this.Acc = 0;
+      this.Xreg = 0;
+      this.Yreg = 0;
+      this.Zflag = 0;
       this.pid = pid;
       this.PC = 0;
       this.base = null;

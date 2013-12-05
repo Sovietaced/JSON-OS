@@ -104,9 +104,12 @@ function CLIconsole() {
     // Handles system call from 6502 instruction set
     this.handleSystemCall = function() {
       // Print the Y register
-       if (_CPU.Xreg == 1){
+      console.log("System call");
+      console.log(_CPU.Xreg);
+       if (_CPU.Xreg == 1 || _CPU.Xreg == 0){
         _StdIn.advanceLine();
-        _StdIn.putText(_CPU.Yreg.toString());
+        console.log("YAYAYA");
+        _StdIn.putText(parseInt(_CPU.Yreg).toString());
         }
         // Print the 00 terminated string located in memory at location Yreg
         if (_CPU.Xreg == 2){
@@ -120,7 +123,7 @@ function CLIconsole() {
               memory = _memoryManager.readMemory(++memLocation);
             }
             _StdIn.advanceLine();
-            //console.log(zeroTermString)
+            console.log(zeroTermString);
             _StdIn.putText(zeroTermString);
         }
     };
