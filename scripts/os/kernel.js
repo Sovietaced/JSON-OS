@@ -164,10 +164,10 @@ function krnInterruptHandler(irq, params)    // This is the Interrupt Handler Ro
         case SYS_OPCODE_IRQ:
           switch(params[0]) {
             case "print":
-              _StdIn.handleSystemCall();
+              _StdIn.handleSystemCall(params);
               break;
             case "break":
-              krnKillProcess();
+              krnKillProcess(params[1]);
               break;
           }
             break;
@@ -307,9 +307,9 @@ function krnSetSchedule(name)
 };
 
 // Remove head process from scheduler
-function krnKillProcess()
+function krnKillProcess(pcbw)
 {
-  _CpuScheduler.kill();
+  _CpuScheduler.kill(pcbw);
 
 };
 

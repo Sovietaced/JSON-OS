@@ -46,6 +46,7 @@
 
       // Check for valid instruction
       if (instruction in OP_CODES){
+        console.log("instruction : " + instruction);
         // Get the instruction value in the opcodes dictionary
         instructionData = OP_CODES[instruction];
         // Determine the arguments based on the instruction's expected arguments
@@ -144,7 +145,7 @@ function noOp(){
 
   function brk(){
     // Spawn Interrupt
-    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ, new Array("break")));
+    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ, new Array("break", _CpuScheduler.getRunningProcess())));
   }
 
   function compare(PC){
@@ -178,7 +179,11 @@ function noOp(){
   }
 
   function system(){
+    // Hack fix because op code gets evaluated late, copy the current RAM
+    var ram = _RAM;
+    var pcbw = _CpuScheduler.getRunningProcess();
+    var cpu = _CPU;
     // Spawn Interrupt
-    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ, new Array("print")));
+    _KernelInterruptQueue.enqueue(new Interrupt(SYS_OPCODE_IRQ, new Array("print", ram, pcbw, cpu)));
   }
 }

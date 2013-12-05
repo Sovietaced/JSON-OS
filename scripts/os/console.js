@@ -102,25 +102,32 @@ function CLIconsole() {
     };
 
     // Handles system call from 6502 instruction set
-    this.handleSystemCall = function() {
-      // Print the Y register
-      console.log("System call");
-      console.log(_CPU.Xreg);
-       if (_CPU.Xreg == 1 || _CPU.Xreg == 0){
+    this.handleSystemCall = function(params) {
+
+      var RAM = params[1];
+      var pcbw = params[2];
+      var CPU = params[3];
+
+      console.log("CPU XREG : " + CPU.Xreg);
+       if (CPU.Xreg == 1){
         _StdIn.advanceLine();
-        console.log("YAYAYA");
-        _StdIn.putText(parseInt(_CPU.Yreg).toString());
+
+        _StdIn.putText(parseInt(CPU.Yreg).toString());
         }
         // Print the 00 terminated string located in memory at location Yreg
-        if (_CPU.Xreg == 2){
+        if (CPU.Xreg == 2){
             // Get value from memory
-            var memLocation = _CPU.Yreg + + _CpuScheduler.getRunningProcess().pcb.getBase();
-            var memory = _memoryManager.readMemory(memLocation);
+            var memLocation = parseInt(CPU.Yreg) + pcbw.pcb.getBase();
+            console.log("pid : " + pcbw.pcb.getPid());
+            console.log("curr pid : " + pcbw.pcb.getPid());
+            console.log(pcbw.pcb.PC);
+            console.log(memLocation);
+            var memory = RAM.readMemory(memLocation);
             var zeroTermString = "";
             // Continue while not 00 terminated
             while (memory != "00"){
               zeroTermString += String.fromCharCode(hexToInt(memory));
-              memory = _memoryManager.readMemory(++memLocation);
+              memory = RAM.readMemory(++memLocation);
             }
             _StdIn.advanceLine();
             console.log(zeroTermString);

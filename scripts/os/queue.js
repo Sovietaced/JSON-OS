@@ -52,6 +52,14 @@ function Queue()
         return retVal;       
     }
     
+    this.remove = function(pcbw){
+        for(var i = 0; i < this.q.length; i++){
+            if(this.q[i].pcb.getPid() == pcbw.pcb.getPid()){
+                this.q.splice(i, 1);
+            }
+        }
+    }
+
     this.toString = function() {
         var retVal = "";
         for (var i in this.q)

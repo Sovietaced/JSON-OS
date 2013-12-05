@@ -132,19 +132,29 @@ function CpuScheduler() {
       // Load state of new head
       this.loadProcess();
 
+      console.log("swapped to : " + this.getRunningProcess().pcb.getPid());
+
       krnTrace("Scheduler has switched from process " + pcbw.pcb.getPid() + " to process " + this.getRunningProcess().pcb.getPid() + ".");
 
     };
 
-    this.kill = function() {
+    this.kill = function(pcbw) {
       
+      // Save the current head state in case we are killing a different pcbw
+      var head = this.getRunningProcess();
+      // Capture the CPU state
+      head.pcb.captureState();
+      // Add the head to the head
+      this.updateReadyQueue(new Array(head));
+
       // Remove the head
-      var pcbw = this.readyQueue.dequeue();
+      this.readyQueue.remove(pcbw);
       krnTrace("Scheduler has killed process " + pcbw.pcb.getPid());
 
       // Try to load the newhead
       this.loadProcess();
 
+      console.log("killed to : " + this.getRunningProcess().pcb.getPid());
     };
 
     this.setQuantum = function(quantum){
