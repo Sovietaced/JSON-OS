@@ -46,7 +46,6 @@
 
       // Check for valid instruction
       if (instruction in OP_CODES){
-        console.log("instruction : " + instruction);
         // Get the instruction value in the opcodes dictionary
         instructionData = OP_CODES[instruction];
         // Determine the arguments based on the instruction's expected arguments

@@ -132,8 +132,6 @@ function CpuScheduler() {
       // Load state of new head
       this.loadProcess();
 
-      console.log("just rotated to : " + this.getRunningProcess().pcb.getPid());
-
       krnTrace("Scheduler has switched from process " + pcbw.pcb.getPid() + " to process " + this.getRunningProcess().pcb.getPid() + ".");
 
     };
@@ -154,7 +152,6 @@ function CpuScheduler() {
       // Try to load the newhead
       this.loadProcess();
 
-      console.log("just killed to : " + this.getRunningProcess().pcb.getPid());
     };
 
     this.setQuantum = function(quantum){

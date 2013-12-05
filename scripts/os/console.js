@@ -108,7 +108,6 @@ function CLIconsole() {
       var pcbw = params[2];
       var CPU = params[3];
 
-      console.log("CPU XREG : " + CPU.Xreg);
        if (CPU.Xreg == 1 || CPU.Xreg == 0){
         _StdIn.advanceLine();
 
@@ -126,8 +125,6 @@ function CLIconsole() {
               memory = RAM.readMemory(++memLocation);
             }
             _StdIn.advanceLine();
-            console.log("pid : " + pcbw.pcb.getPid());
-            console.log("zts : " + zeroTermString);
             _StdIn.putText(zeroTermString);
         }
     };
