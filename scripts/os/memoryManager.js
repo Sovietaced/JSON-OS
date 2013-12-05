@@ -50,7 +50,6 @@ function MemoryManager() {
   this.findFreePartition = function(pid){
     // Loop through the partitions and find one without a PID assigned
     for (var i = 0; i < NUM_PARTITIONS; i++){
-      console.log(this.partitions[i]);
       if(this.partitions[i].pid === null){
         // Mark this partition as taken by the PID
         this.partitions[i].pid = pid;
@@ -95,7 +94,6 @@ this.swap = function(pcbwToMem){
 
   // Get the memory values before we overwrite them
   var index = this.getRandomPartitionIndex();
-  console.log("USING PARTITION : " + index);
   var pid = this.partitions[index].pid;
   var program = this.readPartition(index);
     this.debug();
@@ -165,22 +163,6 @@ this.swap = function(pcbwToMem){
     return values;
   };
 
-this.debug = function(){
-  var str = '';
-
-  for (var i = 0; i < NUM_PARTITIONS; i++){
-    var temp = '';
-    var partition = this.partitions[i];
-     for (var j = partition.low; j < partition.high; j++){
-        temp += _RAM.readMemory(j);
-      }
-
-      str += temp + '\n';
-  }
-  console.log("DEBUGGING");
-  console.log(str);
-
-};
   // Returns pid of a random partition in use
   this.getRandomPartitionIndex = function(){
 
@@ -256,9 +238,6 @@ this.debug = function(){
         return PC;
       }
       else {
-        console.log("memz outta boundz");
-        console.log(_CPU.PC.toString(16));
-        console.log(PC);
          krnTrace("Memory out of bounds exception. Killing the process.");
         _KernelInterruptQueue.enqueue(new Interrupt(MEMORY_OUT_OF_BOUNDS_IRQ)); 
       }

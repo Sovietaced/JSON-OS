@@ -546,8 +546,6 @@ function shellRun(args)
     if (parseInt(pid) >= 0) {
         var pcbw = krnFindProcess(pid);
         if (pcbw){
-            console.log("WTF");
-            console.log(pcbw);
              _StdIn.putText("Running process with PID " + pid + "...");
             var result = krnRunProcess(pid);
             return;

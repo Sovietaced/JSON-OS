@@ -50,10 +50,6 @@
         instructionData = OP_CODES[instruction];
         // Determine the arguments based on the instruction's expected arguments
         arguments = this.readArguments(instructionData.argsLen);
-
-        console.log("PC : " + this.PC);
-        console.log("arguments : " + arguments);
-
         // Execute the instruction
         instructionData.funct(arguments);
         return true;

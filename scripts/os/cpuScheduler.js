@@ -156,14 +156,18 @@ function CpuScheduler() {
 
       var pcbData = [];
       for(var i = 0; i < this.readyQueue.getSize(); i++){
-        pcbData.push(this.readyQueue.q[i].pcb.toArray());
+        var pcbw = this.readyQueue.q[i];
+        var tsb = this.readyQueue.q[i].tsb;
+        var pcb = this.readyQueue.q[i].pcb.toArray();
+        pcb.unshift(tsb);
+        pcbData.push(pcb);
       }
 
        // Remove table body rows
       $("#readyQueue").empty(); 
 
       // Rende heading row
-      data = "<td>PID</td><td>PC</td><td>Base</td><td>Offset</td><td>Acc</td><td>XReg</td><td>YReg</td><td>ZFlag</td>"
+      data = "<td>TSB</td><td>PID</td><td>PC</td><td>Base</td><td>Offset</td><td>Acc</td><td>XReg</td><td>YReg</td><td>ZFlag</td>"
       $('#readyQueue').append('<tr>' + data + '</tr>');
 
       // Render HTML and push it
