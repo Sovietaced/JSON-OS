@@ -275,7 +275,7 @@ function krnKill(pid)
     // Do memory cleanup
     process.pcb.kill();
 
-    removeProcessFromList(process);
+    deleteProcessFromList(process);
 
     return true;
   }

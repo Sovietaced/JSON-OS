@@ -109,7 +109,7 @@ function CLIconsole() {
       var CPU = params[3];
 
       console.log("CPU XREG : " + CPU.Xreg);
-       if (CPU.Xreg == 1){
+       if (CPU.Xreg == 1 || CPU.Xreg == 0){
         _StdIn.advanceLine();
 
         _StdIn.putText(parseInt(CPU.Yreg).toString());
@@ -118,10 +118,6 @@ function CLIconsole() {
         if (CPU.Xreg == 2){
             // Get value from memory
             var memLocation = parseInt(CPU.Yreg) + pcbw.pcb.getBase();
-            console.log("pid : " + pcbw.pcb.getPid());
-            console.log("curr pid : " + pcbw.pcb.getPid());
-            console.log(pcbw.pcb.PC);
-            console.log(memLocation);
             var memory = RAM.readMemory(memLocation);
             var zeroTermString = "";
             // Continue while not 00 terminated
@@ -130,7 +126,8 @@ function CLIconsole() {
               memory = RAM.readMemory(++memLocation);
             }
             _StdIn.advanceLine();
-            console.log(zeroTermString);
+            console.log("pid : " + pcbw.pcb.getPid());
+            console.log("zts : " + zeroTermString);
             _StdIn.putText(zeroTermString);
         }
     };
